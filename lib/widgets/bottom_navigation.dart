@@ -41,19 +41,22 @@ class BottomNavigationState extends State<BottomNavigation> {
           unselectedItemColor: AppColors.gray,
           items: const [
             BottomNavigationBarItem(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.white,
               icon: Icon(Icons.warehouse),
               label: 'Warehouses',
             ),
             BottomNavigationBarItem(
+              backgroundColor: AppColors.white,
               icon: Icon(Icons.category),
               label: 'Categories',
             ),
             BottomNavigationBarItem(
+              backgroundColor: AppColors.white,
               icon: Icon(Icons.history),
               label: 'Order History',
             ),
             BottomNavigationBarItem(
+              backgroundColor: AppColors.white,
               icon: Icon(Icons.people),
               label: 'Users',
             ),

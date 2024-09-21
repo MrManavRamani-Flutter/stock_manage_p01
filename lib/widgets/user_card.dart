@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
@@ -11,7 +13,7 @@ class UserCard extends StatelessWidget {
     super.key,
     required this.userName,
     required this.email,
-    required this.imageUrl,
+    this.imageUrl = './assets/img/users/user_1.png',
   });
 
   @override
@@ -23,7 +25,7 @@ class UserCard extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           radius: 28,
-          backgroundImage: AssetImage(imageUrl),
+          backgroundImage: _getImageProvider(imageUrl),
         ),
         title: Text(
           userName,
@@ -44,5 +46,15 @@ class UserCard extends StatelessWidget {
         },
       ),
     );
+  }
+
+  // Determine the correct ImageProvider based on file path or asset path
+  ImageProvider _getImageProvider(String imageUrl) {
+    if (imageUrl.isEmpty || !File(imageUrl).existsSync()) {
+      return const AssetImage(
+          './assets/img/users/user_1.png'); // Default asset image
+    } else {
+      return FileImage(File(imageUrl)); // Load file image
+    }
   }
 }

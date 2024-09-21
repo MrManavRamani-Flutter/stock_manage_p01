@@ -1,6 +1,10 @@
+import 'dart:async'; // Import for Timer
+
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
+import '../models/order_model.dart';
+import '../utils/global.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_sidebar.dart';
 
@@ -12,32 +16,102 @@ class OrderHistoryView extends StatefulWidget {
 }
 
 class OrderHistoryViewState extends State<OrderHistoryView> {
-  // Mock data for orders
-  List<Map<String, String>> orders = [
-    {"orderID": "DS50-790", "status": "Complete", "date": "April 20, 2023"},
-    {"orderID": "ERO-COMP", "status": "Pending", "date": "April 18, 2023"},
-    {"orderID": "3DPI-981", "status": "Shipped", "date": "April 16, 2023"},
-    {"orderID": "ERO-WG2", "status": "Cancelled", "date": "April 15, 2023"},
-    // Add more orders here...
-  ];
+  final TextEditingController _orderIDController = TextEditingController();
+  final TextEditingController _statusController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
-  List<Map<String, String>> filteredOrders = [];
+  List<Order> filteredOrders = [];
+  Timer? _debounce; // Timer for debouncing search input
 
   @override
   void initState() {
     super.initState();
-    // Initially, display all orders
-    filteredOrders = orders;
+    filteredOrders = Global.orders;
+    _searchController.addListener(_onSearchChanged);
   }
 
-  // Filter the list based on search input
+  // Method called whenever search text changes
+  _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      _filterOrders(_searchController.text);
+    });
+  }
+
+  // Filter orders based on search input
   void _filterOrders(String query) {
     setState(() {
-      filteredOrders = orders
+      filteredOrders = Global.orders
           .where((order) =>
-              order['orderID']!.toLowerCase().contains(query.toLowerCase()))
+              order.orderID.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
+  }
+
+  void _addOrder() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Order'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _orderIDController,
+                decoration: const InputDecoration(labelText: 'Order ID'),
+              ),
+              TextField(
+                controller: _statusController,
+                decoration: const InputDecoration(labelText: 'Status'),
+              ),
+              TextField(
+                controller: _dateController,
+                decoration: const InputDecoration(labelText: 'Date'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  final newOrder = Order(
+                    orderID: _orderIDController.text,
+                    status: _statusController.text,
+                    date: _dateController.text,
+                  );
+                  Global.orders.add(newOrder);
+                  _orderIDController.clear();
+                  _statusController.clear();
+                  _dateController.clear();
+                  _filterOrders(''); // Refresh the filtered list
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _orderIDController.dispose();
+    _statusController.dispose();
+    _dateController.dispose();
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel(); // Dispose the debounce timer
+    super.dispose();
   }
 
   @override
@@ -45,8 +119,8 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Order History',
-        buttonText: '',
-        onButtonPressed: () {},
+        buttonText: 'Add',
+        onButtonPressed: _addOrder,
       ),
       drawer: const Sidebar(),
       body: Padding(
@@ -54,14 +128,27 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
         child: Column(
           children: [
             // Search Bar
-            TextField(
-              onChanged: (value) => _filterOrders(value),
-              decoration: InputDecoration(
-                hintText: 'Search Orders...',
-                prefixIcon: const Icon(Icons.search, color: AppColors.gray),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.gray),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search Orders...',
+                  prefixIcon: const Icon(Icons.search, color: AppColors.gray),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.gray),
+                  ),
                 ),
               ),
             ),
@@ -74,9 +161,9 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
                       itemBuilder: (context, index) {
                         final order = filteredOrders[index];
                         return OrderCard(
-                          orderID: order['orderID']!,
-                          status: order['status']!,
-                          date: order['date']!,
+                          orderID: order.orderID,
+                          status: order.status,
+                          date: order.date,
                         );
                       },
                     )
