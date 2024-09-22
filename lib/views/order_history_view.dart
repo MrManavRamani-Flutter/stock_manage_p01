@@ -1,5 +1,6 @@
 import 'dart:async'; // Import for Timer
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
@@ -17,7 +18,6 @@ class OrderHistoryView extends StatefulWidget {
 
 class OrderHistoryViewState extends State<OrderHistoryView> {
   final TextEditingController _orderIDController = TextEditingController();
-  final TextEditingController _statusController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
@@ -31,7 +31,6 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
     _searchController.addListener(_onSearchChanged);
   }
 
-  // Method called whenever search text changes
   _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () {
@@ -39,7 +38,6 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
     });
   }
 
-  // Filter orders based on search input
   void _filterOrders(String query) {
     setState(() {
       filteredOrders = Global.orders
@@ -50,54 +48,176 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
   }
 
   void _addOrder() {
-    showDialog(
+    _showOrderDialog(
+      title: 'Add Order',
+      onSubmit: (orderID, status, date) {
+        setState(() {
+          final newOrder = Order(
+            orderID: orderID,
+            status: status,
+            date: date,
+          );
+          Global.orders.add(newOrder);
+          _filterOrders(''); // Refresh the filtered list
+        });
+      },
+    );
+  }
+
+  void _editOrder(int index) {
+    final order = filteredOrders[index];
+    _showOrderDialog(
+      title: 'Edit Order',
+      orderID: order.orderID,
+      status: order.status,
+      date: order.date,
+      onSubmit: (orderID, status, date) {
+        setState(() {
+          Global.orders[Global.orders.indexOf(order)] = Order(
+            orderID: orderID,
+            status: status,
+            date: date,
+          );
+          _filterOrders(''); // Refresh the filtered list
+        });
+      },
+    );
+  }
+
+  void _deleteOrder(int index) {
+    showCupertinoDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Order'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _orderIDController,
-                decoration: const InputDecoration(labelText: 'Order ID'),
-              ),
-              TextField(
-                controller: _statusController,
-                decoration: const InputDecoration(labelText: 'Status'),
-              ),
-              TextField(
-                controller: _dateController,
-                decoration: const InputDecoration(labelText: 'Date'),
-              ),
-            ],
-          ),
+        return CupertinoAlertDialog(
+          title: const Text('Delete Order'),
+          content: const Text('Are you sure you want to delete this order?'),
           actions: [
-            TextButton(
+            CupertinoDialogAction(
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              isDefaultAction: true,
               child: const Text('Cancel'),
             ),
-            ElevatedButton(
+            CupertinoDialogAction(
               onPressed: () {
                 setState(() {
-                  final newOrder = Order(
-                    orderID: _orderIDController.text,
-                    status: _statusController.text,
-                    date: _dateController.text,
-                  );
-                  Global.orders.add(newOrder);
-                  _orderIDController.clear();
-                  _statusController.clear();
-                  _dateController.clear();
+                  Global.orders.removeAt(index);
                   _filterOrders(''); // Refresh the filtered list
                 });
                 Navigator.of(context).pop();
               },
-              child: const Text('Add'),
+              isDestructiveAction: true,
+              child: const Text('Delete'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showOrderDialog({
+    required String title,
+    String? orderID,
+    String? status,
+    String? date,
+    required Function(String orderID, String status, String date) onSubmit,
+  }) {
+    // Set initial values for text fields
+    _orderIDController.text = orderID ?? '';
+    _dateController.text = date ?? '';
+
+    // Validate and use the status parameter to set selectedStatus, otherwise use the first status from the list
+    String? selectedStatus =
+        orderStatusList.contains(status) ? status : orderStatusList.first;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(title),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: _orderIDController,
+                      decoration: const InputDecoration(hintText: 'Order ID'),
+                    ),
+                    const SizedBox(height: 10),
+                    DropdownButton<String>(
+                      value: selectedStatus,
+                      isExpanded: true,
+                      hint: const Text('Select Status'),
+                      items: orderStatusList.map((String status) {
+                        return DropdownMenuItem<String>(
+                          value: status,
+                          child: Text(status),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedStatus = newValue;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _dateController,
+                      decoration: const InputDecoration(hintText: 'Date'),
+                      readOnly: true,
+                      onTap: () async {
+                        final selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (selectedDate != null) {
+                          _dateController.text =
+                              '${selectedDate.toLocal()}'.split(' ')[0];
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _orderIDController.clear();
+                    _dateController.clear();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (_orderIDController.text.isNotEmpty &&
+                        selectedStatus != null &&
+                        _dateController.text.isNotEmpty) {
+                      onSubmit(
+                        _orderIDController.text,
+                        selectedStatus!,
+                        _dateController.text,
+                      );
+                      _orderIDController.clear();
+                      _dateController.clear();
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Please enter all fields')),
+                      );
+                    }
+                  },
+                  child: const Text('Submit'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -106,7 +226,6 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
   @override
   void dispose() {
     _orderIDController.dispose();
-    _statusController.dispose();
     _dateController.dispose();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
@@ -164,6 +283,8 @@ class OrderHistoryViewState extends State<OrderHistoryView> {
                           orderID: order.orderID,
                           status: order.status,
                           date: order.date,
+                          onEdit: () => _editOrder(index),
+                          onDelete: () => _deleteOrder(index),
                         );
                       },
                     )
@@ -183,12 +304,16 @@ class OrderCard extends StatelessWidget {
   final String orderID;
   final String status;
   final String date;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const OrderCard({
     super.key,
     required this.orderID,
     required this.status,
     required this.date,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
@@ -201,20 +326,50 @@ class OrderCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Order ID: $orderID',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Order ID: $orderID',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text('Status: $status'),
+                const SizedBox(height: 4),
+                Text('Date: $date'),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text('Status: $status', style: const TextStyle(color: Colors.grey)),
-            const SizedBox(height: 8),
-            Text('Date: $date', style: const TextStyle(color: Colors.grey)),
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: AppColors.gray),
+                  onPressed: onEdit,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: onDelete,
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 }
+
+// List of order statuses
+const List<String> orderStatusList = [
+  'Pending',
+  'Processing',
+  'Shipped',
+  'Delivered',
+  'Cancelled',
+  'Returned',
+];

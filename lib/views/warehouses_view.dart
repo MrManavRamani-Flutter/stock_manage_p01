@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:stock_manage/constants/app_colors.dart';
 
+import '../constants/app_colors.dart';
 import '../models/warehouse_model.dart';
 import '../utils/global.dart';
 import '../widgets/custom_appbar.dart';
@@ -39,62 +40,116 @@ class _WarehousesViewState extends State<WarehousesView> {
   }
 
   void _addWarehouse() {
-    showDialog(
+    _showWarehouseDialog(
+      title: 'Add Warehouse',
+      onSubmit: (name, location) {
+        setState(() {
+          Global.warehouses.add(Warehouse(name: name, location: location));
+          _filterWarehouses();
+        });
+      },
+    );
+  }
+
+  void _editWarehouse(int index) {
+    final warehouse = _filteredWarehouses[index];
+    _showWarehouseDialog(
+      title: 'Edit Warehouse',
+      name: warehouse.name,
+      location: warehouse.location,
+      onSubmit: (name, location) {
+        setState(() {
+          Global.warehouses[index] = Warehouse(name: name, location: location);
+          _filterWarehouses();
+        });
+      },
+    );
+  }
+
+  void _deleteWarehouse(int index) {
+    showCupertinoDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Warehouse'),
+        return CupertinoAlertDialog(
+          title: const Text('Delete Warehouse'),
+          content:
+              const Text('Are you sure you want to delete this warehouse?'),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              isDefaultAction: true,
+              child: const Text('Cancel'),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                setState(() {
+                  Global.warehouses.removeAt(index);
+                  _filterWarehouses();
+                });
+                Navigator.of(context).pop();
+              },
+              isDestructiveAction: true,
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showWarehouseDialog({
+    required String title,
+    String? name,
+    String? location,
+    required Function(String name, String location) onSubmit,
+  }) {
+    if (name != null) _nameController.text = name;
+    if (location != null) _locationController.text = location;
+
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(title),
           content: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              CupertinoTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Warehouse Name',
-                  hintText: 'Enter warehouse name',
-                ),
+                placeholder: 'Warehouse Name',
               ),
-              TextField(
+              const SizedBox(height: 10),
+              CupertinoTextField(
                 controller: _locationController,
-                decoration: const InputDecoration(
-                  labelText: 'Location',
-                  hintText: 'Enter warehouse location',
-                ),
+                placeholder: 'Location',
               ),
             ],
           ),
           actions: [
-            TextButton(
+            CupertinoDialogAction(
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              isDefaultAction: true,
               child: const Text('Cancel'),
             ),
-            ElevatedButton(
+            CupertinoDialogAction(
               onPressed: () {
-                if (_nameController.text.isEmpty ||
-                    _locationController.text.isEmpty) {
+                if (_nameController.text.isNotEmpty &&
+                    _locationController.text.isNotEmpty) {
+                  onSubmit(_nameController.text, _locationController.text);
+                  _nameController.clear();
+                  _locationController.clear();
+                  Navigator.of(context).pop();
+                } else {
                   // Show a message if the input is invalid
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Please enter all fields')),
                   );
-                } else {
-                  setState(() {
-                    Global.warehouses.add(
-                      Warehouse(
-                        name: _nameController.text,
-                        location: _locationController.text,
-                      ),
-                    );
-                    _nameController.clear();
-                    _locationController.clear();
-                    _searchController.clear();
-                    _filterWarehouses(); // Update the filtered list after adding a new warehouse
-                  });
-                  Navigator.of(context).pop();
                 }
               },
-              child: const Text('Add'),
+              child: const Text('Submit'),
             ),
           ],
         );
@@ -138,15 +193,13 @@ class _WarehousesViewState extends State<WarehousesView> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search Warehouses...',
+                  hintText: 'Search Categories...',
+                  prefixIcon: const Icon(Icons.search, color: AppColors.gray),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: AppColors.gray),
                   ),
-                  contentPadding: const EdgeInsets.all(16),
-                  prefixIcon: const Icon(Icons.search),
                 ),
-                style: const TextStyle(color: AppColors.white),
               ),
             ),
             const SizedBox(height: 16),
@@ -156,10 +209,35 @@ class _WarehousesViewState extends State<WarehousesView> {
                       itemCount: _filteredWarehouses.length,
                       itemBuilder: (context, index) {
                         final warehouse = _filteredWarehouses[index];
-                        return ListTile(
-                          leading: const Icon(Icons.location_on),
-                          title: Text(warehouse.name),
-                          subtitle: Text(warehouse.location),
+                        return Card(
+                          elevation: 4,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            leading: const Icon(Icons.location_on,
+                                size: 40, color: Colors.blue),
+                            title: Text(warehouse.name,
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text(warehouse.location),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () => _editWarehouse(index),
+                                  color: Colors.blue,
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () => _deleteWarehouse(index),
+                                  color: Colors.red,
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     )

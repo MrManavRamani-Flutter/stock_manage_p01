@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
@@ -38,48 +39,126 @@ class _CategoriesViewState extends State<CategoriesView> {
   }
 
   void _addCategory() {
-    showDialog(
+    _showCategoryDialog(
+      title: 'Add Category',
+      onSubmit: (name, productCount) {
+        setState(() {
+          final newCategory = Category(
+            name: name,
+            productCount: int.tryParse(productCount) ?? 0,
+          );
+          Global.categories.add(newCategory);
+          _filterCategories();
+        });
+      },
+    );
+  }
+
+  void _editCategory(int index) {
+    final category = _filteredCategories[index];
+    _showCategoryDialog(
+      title: 'Edit Category',
+      name: category.name,
+      productCount: category.productCount.toString(),
+      onSubmit: (name, productCount) {
+        setState(() {
+          Global.categories[index] = Category(
+            name: name,
+            productCount: int.tryParse(productCount) ?? 0,
+          );
+          _filterCategories();
+        });
+      },
+    );
+  }
+
+  void _deleteCategory(int index) {
+    showCupertinoDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Category'),
+        return CupertinoAlertDialog(
+          title: const Text('Delete Category'),
+          content: const Text('Are you sure you want to delete this category?'),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              isDefaultAction: true,
+              child: const Text('Cancel'),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                setState(() {
+                  Global.categories.removeAt(index);
+                  _filterCategories();
+                });
+                Navigator.of(context).pop();
+              },
+              isDestructiveAction: true,
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showCategoryDialog({
+    required String title,
+    String? name,
+    String? productCount,
+    required Function(String name, String productCount) onSubmit,
+  }) {
+    if (name != null) _nameController.text = name;
+    if (productCount != null) _productCountController.text = productCount;
+
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(title),
           content: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              CupertinoTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Category Name'),
+                placeholder: 'Category Name',
               ),
-              TextField(
+              const SizedBox(height: 10),
+              CupertinoTextField(
                 controller: _productCountController,
-                decoration: const InputDecoration(labelText: 'Product Count'),
+                placeholder: 'Product Count',
                 keyboardType: TextInputType.number,
               ),
             ],
           ),
           actions: [
-            TextButton(
+            CupertinoDialogAction(
               onPressed: () {
+                _nameController.clear();
+                _productCountController.clear();
+                setState(() {});
                 Navigator.of(context).pop();
               },
+              isDefaultAction: true,
               child: const Text('Cancel'),
             ),
-            ElevatedButton(
+            CupertinoDialogAction(
               onPressed: () {
-                setState(() {
-                  final newCategory = Category(
-                    name: _nameController.text,
-                    productCount:
-                        int.tryParse(_productCountController.text) ?? 0,
-                  );
-                  Global.categories.add(newCategory);
+                if (_nameController.text.isNotEmpty &&
+                    _productCountController.text.isNotEmpty) {
+                  onSubmit(_nameController.text, _productCountController.text);
                   _nameController.clear();
                   _productCountController.clear();
-                  _filterCategories(); // Update the filtered list after adding a new category
-                });
-                Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                } else {
+                  // Show a message if the input is invalid
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please enter all fields')),
+                  );
+                }
               },
-              child: const Text('Add'),
+              child: const Text('Submit'),
             ),
           ],
         );
@@ -125,79 +204,61 @@ class _CategoriesViewState extends State<CategoriesView> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search Categories...',
+                  prefixIcon: const Icon(Icons.search, color: AppColors.gray),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: AppColors.gray),
                   ),
-                  contentPadding: EdgeInsets.all(16),
-                  prefixIcon: Icon(Icons.search),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            // Category Grid
+            // Category List
             Expanded(
               child: _filteredCategories.isNotEmpty
-                  ? CategoryGrid(categories: _filteredCategories)
+                  ? ListView.builder(
+                      itemCount: _filteredCategories.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 4,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            title: Text(
+                              _filteredCategories[index].name,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                                '${_filteredCategories[index].productCount} products'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () => _editCategory(index),
+                                  color: Colors.blue,
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () => _deleteCategory(index),
+                                  color: Colors.red,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
                   : const Center(
                       child: Text('No categories found'),
                     ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CategoryGrid extends StatelessWidget {
-  final List<Category> categories;
-
-  const CategoryGrid({super.key, required this.categories});
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: categories.length,
-      itemBuilder: (context, index) {
-        return CategoryCard(
-          categoryName: categories[index].name,
-          productCount: categories[index].productCount,
-        );
-      },
-    );
-  }
-}
-
-class CategoryCard extends StatelessWidget {
-  final String categoryName;
-  final int productCount;
-
-  const CategoryCard({
-    super.key,
-    required this.categoryName,
-    required this.productCount,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              categoryName,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text('$productCount products'),
           ],
         ),
       ),
