@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 
-class UserCard extends StatelessWidget {
-  final String userName;
+class ClientCard extends StatelessWidget {
+  final String clientName;
   final String email;
   final String imageUrl;
 
-  const UserCard({
+  const ClientCard({
     super.key,
-    required this.userName,
+    required this.clientName,
     required this.email,
     this.imageUrl = './assets/img/users/user_1.png',
   });
@@ -28,7 +28,7 @@ class UserCard extends StatelessWidget {
           backgroundImage: _getImageProvider(imageUrl),
         ),
         title: Text(
-          userName,
+          clientName,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,

@@ -1,9 +1,13 @@
 class Category {
-  String name;
-  int productCount;
+  final String id; // Add id
+  final String name;
+  final String imageUrl;
+  final int totalProducts;
 
   Category({
+    required this.id,
     required this.name,
-    required this.productCount,
+    required this.imageUrl,
+    required this.totalProducts,
   });
 }

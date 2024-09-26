@@ -15,59 +15,39 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.primaryColor, // Use the primary color for the background
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            icon: const Icon(
-              Icons.menu,
-              color: Colors.white,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Page Title
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.white,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: onButtonPressed,
-                icon: const Icon(
-                  Icons.add,
-                  color: AppColors.primaryColor,
-                ),
-                label: Text(
-                  'Add $title',
-                  style: const TextStyle(color: AppColors.primaryColor),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.white,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-        ],
+    return AppBar(
+      backgroundColor: AppColors.primaryColor,
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: AppColors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
       ),
+      iconTheme: const IconThemeData(color: AppColors.white),
+      actions: [
+        ElevatedButton.icon(
+          onPressed: onButtonPressed,
+          icon: const Icon(Icons.add, color: AppColors.primaryColor),
+          label: Text(
+            buttonText,
+            style: const TextStyle(color: AppColors.primaryColor),
+          ),
+          style: ElevatedButton.styleFrom(
+            fixedSize: const Size.fromWidth(100),
+            backgroundColor: AppColors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
+        const SizedBox(width: 16),
+      ],
     );
   }
 
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(135); // Adjust height based on needs
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight * 1.05);
 }
