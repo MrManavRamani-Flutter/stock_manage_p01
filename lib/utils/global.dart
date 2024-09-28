@@ -1,5 +1,6 @@
 import 'package:stock_manage/models/employee_model.dart';
 import 'package:stock_manage/models/product_model.dart';
+import 'package:stock_manage/models/purchase_model.dart';
 
 import '../models/category_model.dart';
 import '../models/client_model.dart';
@@ -142,13 +143,6 @@ class Global {
     ),
   ];
 
-  static List<Product> products = [
-    Product(id: 'P1', name: 'Product 1', stock: 50, categoryId: 'C1'),
-    Product(id: 'P2', name: 'Product 2', stock: 30, categoryId: 'C1'),
-    Product(id: 'P3', name: 'Product 3', stock: 20, categoryId: 'C2'),
-    Product(id: 'P4', name: 'Product 4', stock: 10, categoryId: 'C3'),
-  ];
-
   static List<Order> orders = [
     Order(orderID: 'DS50-790', status: 'Complete', date: 'April 20, 2023'),
     Order(orderID: 'ERO-COMP', status: 'Pending', date: 'April 18, 2023'),
@@ -159,34 +153,102 @@ class Global {
 
   static List<Client> clients = [
     Client(
+      id: '1',
       clientName: 'John Doe',
       email: 'john.doe@example.com',
-      imageUrl: './assets/img/users/user_1.png',
+      contact: '123-456-7890',
+      imageUrl: '',
       shopAddress: '1234 Elm St, Springfield, IL',
     ),
     Client(
+      id: '2',
       clientName: 'Jane Smith',
       email: 'jane.smith@example.com',
-      imageUrl: './assets/img/users/user_1.png',
+      contact: '987-654-3210',
+      imageUrl: '',
       shopAddress: '5678 Oak St, Springfield, IL',
     ),
-    Client(
-      clientName: 'Carlos Santana',
-      email: 'carlos.santana@example.com',
-      imageUrl: './assets/img/users/user_1.png',
-      shopAddress: '9101 Maple St, Springfield, IL',
+  ];
+
+  static List<Product> products = [
+    Product(
+      id: 'P1',
+      name: 'Product 1',
+      price: 19.99,
+      stock: 50,
+      description: 'Description for Product 1',
+      createdAt: DateTime.now(),
+      wornLimitStock: 5,
+      categoryId: 'C1',
     ),
-    Client(
-      clientName: 'Linda Johnson',
-      email: 'linda.johnson@example.com',
-      imageUrl: './assets/img/users/user_1.png',
-      shopAddress: '1121 Birch St, Springfield, IL',
+    Product(
+      id: 'P2',
+      name: 'Product 2',
+      price: 29.99,
+      stock: 30,
+      description: 'Description for Product 2',
+      createdAt: DateTime.now(),
+      wornLimitStock: 5,
+      categoryId: 'C1',
     ),
-    Client(
-      clientName: 'Michael Brown',
-      email: 'michael.brown@example.com',
-      imageUrl: './assets/img/users/user_1.png',
-      shopAddress: '1314 Cedar St, Springfield, IL',
+    Product(
+      id: 'P3',
+      name: 'Product 3',
+      price: 39.99,
+      stock: 20,
+      description: 'Description for Product 3',
+      createdAt: DateTime.now(),
+      wornLimitStock: 3,
+      categoryId: 'C2',
+    ),
+    Product(
+      id: 'P4',
+      name: 'Product 4',
+      price: 49.99,
+      stock: 10,
+      description: 'Description for Product 4',
+      createdAt: DateTime.now(),
+      wornLimitStock: 2,
+      categoryId: 'C3',
+    ),
+  ];
+
+  static List<Purchase> purchases = [
+    Purchase(
+      clientId: '1',
+      productId: 'P1',
+      // Linking to Product 1
+      totalAmount: 10000,
+      totalPayment: 7000,
+      pendingPayment: 3000,
+      stock: 100,
+    ),
+    Purchase(
+      clientId: '1',
+      productId: 'P2',
+      // Linking to Product 2
+      totalAmount: 10000,
+      totalPayment: 7500,
+      pendingPayment: 2500,
+      stock: 100,
+    ),
+    Purchase(
+      clientId: '1',
+      productId: 'P3',
+      // Linking to Product 3
+      totalAmount: 10000,
+      totalPayment: 7500,
+      pendingPayment: 2500,
+      stock: 100,
+    ),
+    Purchase(
+      clientId: '2',
+      productId: 'P2',
+      // Linking to Product 2
+      totalAmount: 15000,
+      totalPayment: 10000,
+      pendingPayment: 5000,
+      stock: 50,
     ),
   ];
 }
