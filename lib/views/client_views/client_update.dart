@@ -8,12 +8,13 @@ import '../../utils/global.dart';
 
 class EditClientView extends StatefulWidget {
   final Client client;
-  final Function(Client) onClientUpdated; // Add this line
+  final Function(Client) onClientUpdated;
 
-  const EditClientView(
-      {super.key,
-      required this.client,
-      required this.onClientUpdated}); // Update constructor
+  const EditClientView({
+    super.key,
+    required this.client,
+    required this.onClientUpdated,
+  });
 
   @override
   EditClientViewState createState() => EditClientViewState();
@@ -24,12 +25,17 @@ class EditClientViewState extends State<EditClientView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _shopAddressController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
+
   String _selectedImage = '';
   final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
+    _initializeFields();
+  }
+
+  void _initializeFields() {
     _clientNameController.text = widget.client.clientName;
     _emailController.text = widget.client.email;
     _shopAddressController.text = widget.client.shopAddress ?? '';
@@ -41,22 +47,18 @@ class EditClientViewState extends State<EditClientView> {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _selectedImage = image.path; // Update the selected image path
+        _selectedImage = image.path;
       });
     }
   }
 
   void _saveChanges() {
-    // Validate the fields before updating
     if (_clientNameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a client name')),
-      );
+      _showSnackbar('Please enter a client name');
       return;
     }
 
-    // Update the client details
-    Client updatedClient = Client(
+    final updatedClient = Client(
       id: widget.client.id,
       clientName: _clientNameController.text,
       email: _emailController.text,
@@ -66,16 +68,22 @@ class EditClientViewState extends State<EditClientView> {
       shopAddress: _shopAddressController.text,
     );
 
-    // Find and replace the existing client in the global list
-    int index =
+    _updateClientInGlobalList(updatedClient);
+    widget.onClientUpdated(updatedClient);
+    Navigator.of(context).pop();
+  }
+
+  void _updateClientInGlobalList(Client updatedClient) {
+    final index =
         Global.clients.indexWhere((client) => client.id == widget.client.id);
     if (index != -1) {
       Global.clients[index] = updatedClient;
     }
+  }
 
-    widget.onClientUpdated(updatedClient); // Notify parent about the update
-
-    Navigator.of(context).pop(); // Close the edit screen
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -90,37 +98,16 @@ class EditClientViewState extends State<EditClientView> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                TextFormField(
-                  controller: _clientNameController,
-                  decoration: const InputDecoration(labelText: 'Client Name'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a client name';
-                    }
-                    return null;
-                  },
-                ),
+                _buildTextField(_clientNameController, 'Client Name',
+                    'Please enter a client name'),
                 const SizedBox(height: 12),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                ),
+                _buildTextField(_emailController, 'Email'),
                 const SizedBox(height: 12),
-                TextFormField(
-                  controller: _shopAddressController,
-                  decoration: const InputDecoration(labelText: 'Shop Address'),
-                ),
+                _buildTextField(_shopAddressController, 'Shop Address'),
                 const SizedBox(height: 12),
-                TextFormField(
-                  controller: _contactController,
-                  decoration: const InputDecoration(labelText: 'Contact'),
-                ),
+                _buildTextField(_contactController, 'Contact'),
                 const SizedBox(height: 12),
-                _selectedImage.isNotEmpty
-                    ? Image.file(File(_selectedImage),
-                        height: 100) // Display selected image
-                    : const SizedBox(
-                        height: 100), // Placeholder for image if none selected
+                _buildImagePreview(),
                 const SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: _pickImage,
@@ -137,5 +124,24 @@ class EditClientViewState extends State<EditClientView> {
         ),
       ),
     );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      [String? errorMessage]) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        errorText: errorMessage != null && controller.text.isEmpty
+            ? errorMessage
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildImagePreview() {
+    return _selectedImage.isNotEmpty
+        ? Image.file(File(_selectedImage), height: 100)
+        : const SizedBox(height: 100);
   }
 }

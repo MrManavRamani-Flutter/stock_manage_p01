@@ -19,11 +19,13 @@ class ClientInfoCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
+            // Client Image
             CircleAvatar(
               radius: 40,
               backgroundImage: _getImageProvider(client.imageUrl),
             ),
             const SizedBox(width: 20),
+            // Client Information
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,14 +33,17 @@ class ClientInfoCard extends StatelessWidget {
                   Text(
                     "Name: ${client.clientName}",
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text("Shop: ${client.shopAddress ?? 'N/A'}"),
                   const SizedBox(height: 8),
                   Text("Email: ${client.email}"),
                   const SizedBox(height: 8),
-                  Text("Contact: ${client.contact}"),
+                  Text(
+                      "Contact: ${client.contact ?? 'N/A'}"), // Added null check for contact
                 ],
               ),
             ),
@@ -48,6 +53,7 @@ class ClientInfoCard extends StatelessWidget {
     );
   }
 
+  // Helper method to get the image provider based on the image URL
   ImageProvider<Object> _getImageProvider(String? imageUrl) {
     // Check if the imageUrl is a valid file path
     if (imageUrl != null && File(imageUrl).existsSync()) {

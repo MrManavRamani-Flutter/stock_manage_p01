@@ -1,17 +1,19 @@
 class Purchase {
+  final String purchaseId;
   final String clientId;
-  final String productId; // Add productId field
+  final String productId;
   final double totalAmount;
-  final double totalPayment;
-  final double pendingPayment;
+  double totalPayment;
+  double pendingPayment;
   final int stock;
 
   Purchase({
+    required this.purchaseId,
     required this.clientId,
     required this.productId, // Include in constructor
     required this.totalAmount,
-    required this.totalPayment,
-    required this.pendingPayment,
+    required this.totalPayment, // Now mutable
+    required this.pendingPayment, // Now mutable
     required this.stock,
   });
 }

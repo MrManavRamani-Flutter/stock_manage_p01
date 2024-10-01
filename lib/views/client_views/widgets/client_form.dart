@@ -22,38 +22,55 @@ class _ClientFormState extends State<ClientForm> {
   final _formKey = GlobalKey<FormState>();
   String _selectedImage = '';
 
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildTextField(_clientNameController, 'Client Name',
+                isRequired: true),
+            const SizedBox(height: 12),
+            _buildTextField(_emailController, 'Email', isRequired: true),
+            const SizedBox(height: 12),
+            _buildTextField(_contactController, 'Contact', isRequired: true),
+            const SizedBox(height: 12),
+            _buildTextField(_shopAddressController, 'Shop Address'),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _pickImage,
+              child: const Text('Pick Image'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _addClient,
+              child: const Text('Add Client'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await showDialog<XFile?>(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Select Image Source'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Gallery'),
-                  onTap: () async {
-                    final file =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    Navigator.of(context).pop(file);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Camera'),
-                  onTap: () async {
-                    final file =
-                        await picker.pickImage(source: ImageSource.camera);
-                    Navigator.of(context).pop(file);
-                  },
-                ),
-              ],
-            ),
-          );
-        });
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildImageSourceOption(picker, ImageSource.gallery, 'Gallery'),
+              _buildImageSourceOption(picker, ImageSource.camera, 'Camera'),
+            ],
+          ),
+        );
+      },
+    );
 
     if (pickedFile != null) {
       final file = File(pickedFile.path);
@@ -67,6 +84,20 @@ class _ClientFormState extends State<ClientForm> {
         _selectedImage = ''; // Reset if no image is selected
       });
     }
+  }
+
+  ListTile _buildImageSourceOption(
+      ImagePicker picker, ImageSource source, String title) {
+    return ListTile(
+      leading: Icon(source == ImageSource.camera
+          ? Icons.camera_alt
+          : Icons.photo_library),
+      title: Text(title),
+      onTap: () async {
+        final file = await picker.pickImage(source: source);
+        Navigator.of(context).pop(file);
+      },
+    );
   }
 
   void _addClient() {
@@ -91,40 +122,13 @@ class _ClientFormState extends State<ClientForm> {
     _emailController.clear();
     _contactController.clear();
     _shopAddressController.clear();
-    _selectedImage = ''; // Reset the image path
+    setState(() {
+      _selectedImage = ''; // Reset the image path
+    });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _textField(_clientNameController, 'Client Name', true),
-            const SizedBox(height: 12),
-            _textField(_emailController, 'Email', true),
-            const SizedBox(height: 12),
-            _textField(_contactController, 'Contact', true),
-            const SizedBox(height: 12),
-            _textField(_shopAddressController, 'Shop Address'),
-            const SizedBox(height: 12),
-            ElevatedButton(
-                onPressed: _pickImage, child: const Text('Pick Image')),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _addClient,
-              child: const Text('Add Client'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  TextFormField _textField(TextEditingController controller, String label,
-      [bool isRequired = false]) {
+  TextFormField _buildTextField(TextEditingController controller, String label,
+      {bool isRequired = false}) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -132,12 +136,8 @@ class _ClientFormState extends State<ClientForm> {
         border: const OutlineInputBorder(),
       ),
       validator: isRequired
-          ? (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a $label';
-              }
-              return null;
-            }
+          ? (value) =>
+              value == null || value.isEmpty ? 'Please enter a $label' : null
           : null,
     );
   }

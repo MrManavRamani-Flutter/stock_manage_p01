@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stock_manage/views/client_views/purchase_views/purchase_products.dart';
 import 'package:stock_manage/views/employee_views/employee_view.dart';
 import 'package:stock_manage/views/profile_views/user_profile.dart';
 import 'package:stock_manage/widgets/custom_sidebar.dart';
@@ -21,6 +22,7 @@ class BottomNavigationState extends State<BottomNavigation> {
     const ClientsView(),
     const WarehousesView(),
     const EmployeeView(),
+    const PurchaseProduct(),
     const UserProfile(),
   ];
 
@@ -56,6 +58,11 @@ class BottomNavigationState extends State<BottomNavigation> {
               backgroundColor: AppColors.white,
               icon: Icon(Icons.category),
               label: 'Employees',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: AppColors.white,
+              icon: Icon(Icons.receipt_long),
+              label: 'Orders', // New Order option
             ),
             BottomNavigationBarItem(
               backgroundColor: AppColors.white,

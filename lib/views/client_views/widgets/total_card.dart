@@ -26,7 +26,7 @@ class TotalCard extends StatelessWidget {
         children: [
           Text(label, style: TextStyle(fontSize: 16, color: color)),
           const SizedBox(height: 8),
-          Text("\$$amount",
+          Text("Rs. $amount",
               style: TextStyle(
                   fontSize: 20, fontWeight: FontWeight.bold, color: color)),
         ],

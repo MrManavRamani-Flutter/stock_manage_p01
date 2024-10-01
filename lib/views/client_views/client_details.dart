@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:stock_manage/constants/app_colors.dart';
+import 'package:stock_manage/models/client_model.dart';
+import 'package:stock_manage/models/purchase_model.dart';
 import 'package:stock_manage/models/purchase_summary.dart';
+import 'package:stock_manage/utils/global.dart';
 import 'package:stock_manage/views/client_views/client_update.dart';
-import 'package:stock_manage/views/client_views/purchase_wiews/purchase_details_list.dart';
-import 'package:stock_manage/views/client_views/purchase_wiews/purchase_products.dart';
+import 'package:stock_manage/views/client_views/purchase_views/payment_screen.dart';
+import 'package:stock_manage/views/client_views/purchase_views/purchase_details_list.dart';
 import 'package:stock_manage/views/client_views/widgets/client_info_card.dart';
 import 'package:stock_manage/views/client_views/widgets/payment_status_cards.dart';
 import 'package:stock_manage/views/client_views/widgets/total_card.dart';
-
-import '../../constants/app_colors.dart';
-import '../../models/client_model.dart';
-import '../../models/purchase_model.dart';
-import '../../utils/global.dart';
 
 class ClientDetails extends StatefulWidget {
   final Client client;
@@ -24,33 +23,28 @@ class ClientDetails extends StatefulWidget {
 class _ClientDetailsState extends State<ClientDetails> {
   late List<Purchase> clientPurchases;
   late PurchaseSummary summary;
-  late Client currentClient;
 
   @override
   void initState() {
     super.initState();
-    currentClient = widget.client;
     _fetchClientPurchases();
   }
 
   void _fetchClientPurchases() {
-    clientPurchases = Global.purchases
-        .where((purchase) => purchase.clientId == currentClient.id)
-        .toList();
-    summary = _calculatePurchasesSummary(clientPurchases);
+    setState(() {
+      clientPurchases = Global.purchases
+          .where((purchase) => purchase.clientId == widget.client.id)
+          .toList();
+      summary = _calculatePurchasesSummary(clientPurchases);
+    });
   }
 
   void _updateClientDetails(Client updatedClient) {
     setState(() {
-      currentClient = updatedClient;
-
-      final index =
-          Global.clients.indexWhere((client) => client.id == currentClient.id);
-      if (index != -1) {
-        Global.clients[index] = updatedClient;
-      }
-
-      _fetchClientPurchases(); // Re-fetch purchases for updated client
+      Global.clients[Global.clients
+              .indexWhere((client) => client.id == updatedClient.id)] =
+          updatedClient;
+      _fetchClientPurchases();
     });
   }
 
@@ -60,100 +54,106 @@ class _ClientDetailsState extends State<ClientDetails> {
       appBar: AppBar(
         title: const Text('Client Details'),
         backgroundColor: AppColors.primaryColor,
-        iconTheme: const IconThemeData(color: AppColors.white),
-        titleTextStyle: const TextStyle(
-            color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditClientView(
-                    client: currentClient,
-                    onClientUpdated: _updateClientDetails,
-                  ),
-                ),
-              );
-            },
+            icon: const Icon(Icons.refresh),
+            onPressed: _fetchClientPurchases,
           ),
-          const SizedBox(width: 16),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: _navigateToEditClient,
+          ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: AppColors.backgroundColor,
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClientInfoCard(client: currentClient),
-              const SizedBox(height: 20),
-              const Divider(color: AppColors.gray, thickness: 1),
-              const SizedBox(height: 20),
-              PaymentStatusCards(
-                totalPaid: summary.totalPaid,
-                totalPending: summary.totalPending,
-              ),
-              const SizedBox(height: 20),
-              TotalCard(
-                label: "Total",
-                amount: summary.totalAmount.toStringAsFixed(2),
-                color: AppColors.accentColor,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Purchase Details:",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textColor,
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              PurchaseProduct(clientId: currentClient.id),
-                        ),
-                      )
-                          .then((value) {
-                        // Re-fetch the client purchases after returning
-                        _fetchClientPurchases();
-                        setState(() {}); // Trigger UI rebuild
-                      });
-                    },
-                    child: const Text(
-                      "Order",
-                      style: TextStyle(
-                        color: AppColors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              PurchaseDetailsList(
-                purchases: clientPurchases,
-              ),
-            ],
-          ),
+      body: _buildBody(),
+    );
+  }
+
+  void _navigateToEditClient() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditClientView(
+          client: widget.client,
+          onClientUpdated: _updateClientDetails,
         ),
       ),
     );
   }
 
+  Widget _buildBody() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClientInfoCard(client: widget.client),
+          const Divider(color: AppColors.gray, thickness: 1),
+          PaymentStatusCards(
+            totalPaid: summary.totalPaid,
+            totalPending: summary.totalPending,
+          ),
+          TotalCard(
+            label: "Total",
+            amount: summary.totalAmount.toStringAsFixed(2),
+            color: AppColors.accentColor,
+          ),
+          _buildPayPendingButton(),
+          const SizedBox(height: 20),
+          const Text(
+            "Purchase Details",
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textColor),
+          ),
+          PurchaseDetailsList(purchases: clientPurchases),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPayPendingButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: _navigateToPaymentScreen,
+        child: const Text("Pay Pending Amount"),
+      ),
+    );
+  }
+
+  void _navigateToPaymentScreen() {
+    final pendingPurchases = clientPurchases
+        .where((purchase) => purchase.pendingPayment > 0)
+        .toList();
+
+    if (pendingPurchases.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No pending amounts available.')));
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen(
+          client: widget.client,
+          purchases: pendingPurchases,
+          totalPending: pendingPurchases.fold(
+              0.0, (sum, purchase) => sum + purchase.pendingPayment),
+          onPaymentConfirmed: () {
+            setState(() {
+              _fetchClientPurchases();
+            });
+          },
+        ),
+      ),
+    ).then((_) {
+      _fetchClientPurchases();
+    });
+  }
+
   PurchaseSummary _calculatePurchasesSummary(List<Purchase> purchases) {
-    int totalPurchases = purchases.length;
     double totalAmount =
         purchases.fold(0.0, (sum, purchase) => sum + purchase.totalAmount);
     double totalPaid =
@@ -161,7 +161,7 @@ class _ClientDetailsState extends State<ClientDetails> {
     double totalPending = totalAmount - totalPaid;
 
     return PurchaseSummary(
-      totalPurchases: totalPurchases,
+      totalPurchases: purchases.length,
       totalAmount: totalAmount,
       totalPaid: totalPaid,
       totalPending: totalPending,

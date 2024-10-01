@@ -174,7 +174,7 @@ class Global {
     Product(
       id: 'P1',
       name: 'Product 1',
-      price: 19.99,
+      price: 1900.00,
       stock: 50,
       description: 'Description for Product 1',
       createdAt: DateTime.now(),
@@ -184,7 +184,7 @@ class Global {
     Product(
       id: 'P2',
       name: 'Product 2',
-      price: 29.99,
+      price: 2900.99,
       stock: 30,
       description: 'Description for Product 2',
       createdAt: DateTime.now(),
@@ -194,7 +194,7 @@ class Global {
     Product(
       id: 'P3',
       name: 'Product 3',
-      price: 39.99,
+      price: 3900.99,
       stock: 20,
       description: 'Description for Product 3',
       createdAt: DateTime.now(),
@@ -204,7 +204,7 @@ class Global {
     Product(
       id: 'P4',
       name: 'Product 4',
-      price: 49.99,
+      price: 10000.09,
       stock: 10,
       description: 'Description for Product 4',
       createdAt: DateTime.now(),
@@ -215,40 +215,49 @@ class Global {
 
   static List<Purchase> purchases = [
     Purchase(
+      purchaseId: 'PCH1',
       clientId: '1',
       productId: 'P1',
-      // Linking to Product 1
-      totalAmount: 10000,
-      totalPayment: 7000,
-      pendingPayment: 3000,
-      stock: 100,
+      totalAmount: 10000.00,
+      totalPayment: 7000.00,
+      pendingPayment: 3000.00,
+      stock: 50, // Stock purchased
     ),
     Purchase(
+      purchaseId: 'PCH2',
       clientId: '1',
       productId: 'P2',
-      // Linking to Product 2
-      totalAmount: 10000,
-      totalPayment: 7500,
-      pendingPayment: 2500,
-      stock: 100,
+      totalAmount: 5000.00,
+      totalPayment: 5000.00,
+      pendingPayment: 0.00,
+      stock: 20,
     ),
     Purchase(
-      clientId: '1',
-      productId: 'P3',
-      // Linking to Product 3
-      totalAmount: 10000,
-      totalPayment: 7500,
-      pendingPayment: 2500,
-      stock: 100,
-    ),
-    Purchase(
+      purchaseId: 'PCH3',
       clientId: '2',
-      productId: 'P2',
-      // Linking to Product 2
-      totalAmount: 15000,
-      totalPayment: 10000,
-      pendingPayment: 5000,
-      stock: 50,
+      productId: 'P3',
+      totalAmount: 8000.00,
+      totalPayment: 4000.00,
+      pendingPayment: 4000.00,
+      stock: 10,
+    ),
+    Purchase(
+      purchaseId: 'PCH4',
+      clientId: '2',
+      productId: 'P4',
+      totalAmount: 12000.00,
+      totalPayment: 6000.00,
+      pendingPayment: 6000.00,
+      stock: 5,
+    ),
+    Purchase(
+      purchaseId: 'PCH5',
+      clientId: '3',
+      productId: 'P1',
+      totalAmount: 15000.00,
+      totalPayment: 10000.00,
+      pendingPayment: 5000.00,
+      stock: 100,
     ),
   ];
 }
