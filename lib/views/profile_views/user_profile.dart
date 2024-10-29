@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:stock_manage/constants/app_colors.dart';
 import 'package:stock_manage/utils/global.dart';
-import 'package:stock_manage/widgets/custom_sidebar.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key});
@@ -9,9 +9,24 @@ class UserProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        backgroundColor: AppColors.primaryColor,
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: AppColors.white),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
-      drawer: const Sidebar(), // Assuming Sidebar is defined elsewhere
+      // drawer: const Sidebar(), // Assuming Sidebar is defined elsewhere
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -21,10 +36,10 @@ class UserProfile extends StatelessWidget {
               children: [
                 _buildUserImage(),
                 const SizedBox(width: 16),
-                Expanded(
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'Username', // Replace with actual username
                         style: TextStyle(
@@ -82,11 +97,11 @@ class UserProfile extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(color: Colors.blueAccent, width: 2),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 8.0,
-            offset: const Offset(2, 2),
+            offset: Offset(2, 2),
           ),
         ],
         image: const DecorationImage(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stock_manage/views/client_views/purchase_views/purchase_products.dart';
 import 'package:stock_manage/views/employee_views/employee_view.dart';
-import 'package:stock_manage/views/profile_views/user_profile.dart';
+import 'package:stock_manage/views/home_views/dashboard.dart';
 import 'package:stock_manage/widgets/custom_sidebar.dart';
 
 import '../constants/app_colors.dart';
@@ -16,14 +16,15 @@ class BottomNavigation extends StatefulWidget {
 }
 
 class BottomNavigationState extends State<BottomNavigation> {
-  int _currentIndex = 0;
+  int _currentIndex = 2;
 
   final List<Widget> _screens = [
     const ClientsView(),
     const WarehousesView(),
+    const Dashboard(),
     const EmployeeView(),
     const PurchaseProduct(),
-    const UserProfile(),
+    // const UserProfile(),
   ];
 
   @override
@@ -56,6 +57,11 @@ class BottomNavigationState extends State<BottomNavigation> {
             ),
             BottomNavigationBarItem(
               backgroundColor: AppColors.white,
+              icon: Icon(Icons.dashboard),
+              label: 'Profile',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: AppColors.white,
               icon: Icon(Icons.category),
               label: 'Employees',
             ),
@@ -64,11 +70,11 @@ class BottomNavigationState extends State<BottomNavigation> {
               icon: Icon(Icons.receipt_long),
               label: 'Orders', // New Order option
             ),
-            BottomNavigationBarItem(
-              backgroundColor: AppColors.white,
-              icon: Icon(Icons.perm_contact_cal_sharp),
-              label: 'Profile',
-            ),
+            // BottomNavigationBarItem(
+            //   backgroundColor: AppColors.white,
+            //   icon: Icon(Icons.perm_contact_cal_sharp),
+            //   label: 'Profile',
+            // ),
           ],
         ),
       ),

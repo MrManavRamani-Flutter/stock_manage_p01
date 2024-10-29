@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stock_manage/constants/app_colors.dart';
 import 'package:stock_manage/models/product_model.dart';
 import 'package:stock_manage/models/purchase_model.dart';
 import 'package:stock_manage/utils/global.dart';
@@ -35,7 +36,17 @@ class PurchaseProductState extends State<PurchaseProduct> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Purchase Products'),
+        titleTextStyle: const TextStyle(color: AppColors.white),
+        iconTheme: const IconThemeData(color: AppColors.white),
+        title: const Text(
+          'Purchase Products',
+          style: TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: AppColors.primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -154,8 +165,8 @@ class PurchaseProductState extends State<PurchaseProduct> {
             double totalPayment = product.price * quantity;
 
             Purchase newPurchase = Purchase(
-              purchaseId:
-                  'PCH${Global.purchases.length + 1}', // Unique purchaseId
+              purchaseId: 'PCH${Global.purchases.length + 1}',
+              // Unique purchaseId
               clientId: selectedClientId!,
               productId: productId,
               totalAmount: totalPayment,

@@ -52,7 +52,16 @@ class _ClientDetailsState extends State<ClientDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Client Details'),
+        titleTextStyle: const TextStyle(color: AppColors.white),
+        iconTheme: const IconThemeData(color: AppColors.white),
+        title: const Text(
+          'Client Details',
+          style: TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         actions: [
           IconButton(
