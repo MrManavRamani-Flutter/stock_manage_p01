@@ -88,6 +88,56 @@ class _WarehousesViewState extends State<WarehousesView> {
     );
   }
 
+  void _showAddWarehouseDialog(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController locationController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add Warehouse'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Warehouse Name'),
+              ),
+              TextField(
+                controller: locationController,
+                decoration: const InputDecoration(labelText: 'Location'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Add the warehouse to the list
+                Global.warehouses.add(
+                  Warehouse(
+                    id: 'W${Global.warehouses.length + 1}', // Generate a new id
+                    name: nameController.text,
+                    location: locationController.text,
+                    categories: [], // Empty list for categories initially
+                  ),
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +154,7 @@ class _WarehousesViewState extends State<WarehousesView> {
         iconTheme: const IconThemeData(color: AppColors.white),
         actions: [
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () => _showAddWarehouseDialog(context),
             icon: const Icon(Icons.add, color: AppColors.primaryColor),
             label: const Text(
               'Add',

@@ -173,6 +173,7 @@ class PurchaseProductState extends State<PurchaseProduct> {
               totalPayment: 0.0,
               pendingPayment: totalPayment,
               stock: quantity,
+              createdAt: DateTime.now(), // Add this line
             );
 
             // Update stock

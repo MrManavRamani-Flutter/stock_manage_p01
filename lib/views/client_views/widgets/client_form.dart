@@ -24,31 +24,62 @@ class _ClientFormState extends State<ClientForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildTextField(_clientNameController, 'Client Name',
-                isRequired: true),
-            const SizedBox(height: 12),
-            _buildTextField(_emailController, 'Email', isRequired: true),
-            const SizedBox(height: 12),
-            _buildTextField(_contactController, 'Contact', isRequired: true),
-            const SizedBox(height: 12),
-            _buildTextField(_shopAddressController, 'Shop Address'),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _pickImage,
-              child: const Text('Pick Image'),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _addClient,
-              child: const Text('Add Client'),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Add New Client',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              _buildTextField(_clientNameController, 'Client Name',
+                  isRequired: true),
+              const SizedBox(height: 12),
+              _buildTextField(_emailController, 'Email', isRequired: true),
+              const SizedBox(height: 12),
+              _buildTextField(_contactController, 'Contact', isRequired: true),
+              const SizedBox(height: 12),
+              _buildTextField(_shopAddressController, 'Shop Address'),
+              const SizedBox(height: 20),
+              if (_selectedImage.isNotEmpty)
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: FileImage(File(_selectedImage)),
+                )
+              else
+                const Icon(Icons.person, size: 80, color: Colors.grey),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: _pickImage,
+                icon: const Icon(Icons.image),
+                label: const Text('Pick Image'),
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _addClient,
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Add Client', style: TextStyle(fontSize: 16)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -76,12 +107,12 @@ class _ClientFormState extends State<ClientForm> {
       final file = File(pickedFile.path);
       if (await file.exists()) {
         setState(() {
-          _selectedImage = pickedFile.path; // Use the selected image
+          _selectedImage = pickedFile.path;
         });
       }
     } else {
       setState(() {
-        _selectedImage = ''; // Reset if no image is selected
+        _selectedImage = '';
       });
     }
   }
@@ -123,7 +154,7 @@ class _ClientFormState extends State<ClientForm> {
     _contactController.clear();
     _shopAddressController.clear();
     setState(() {
-      _selectedImage = ''; // Reset the image path
+      _selectedImage = '';
     });
   }
 
@@ -133,7 +164,15 @@ class _ClientFormState extends State<ClientForm> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       ),
       validator: isRequired
           ? (value) =>

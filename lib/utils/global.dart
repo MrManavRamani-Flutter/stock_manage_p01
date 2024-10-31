@@ -148,26 +148,23 @@ class Global {
     Order(orderID: 'ERO-COMP', status: 'Pending', date: 'April 18, 2023'),
     Order(orderID: '3DPI-981', status: 'Shipped', date: 'April 16, 2023'),
     Order(orderID: 'ERO-WG2', status: 'Cancelled', date: 'April 15, 2023'),
-    // Add more initial orders here...
   ];
 
   static List<Client> clients = [
     Client(
-      id: '1',
-      clientName: 'John Doe',
-      email: 'john.doe@example.com',
-      contact: '123-456-7890',
-      imageUrl: '',
-      shopAddress: '1234 Elm St, Springfield, IL',
-    ),
+        id: '1',
+        clientName: 'John Doe',
+        email: 'john.doe@example.com',
+        contact: '123-456-7890',
+        imageUrl: '',
+        shopAddress: '1234 Elm St, Springfield, IL'),
     Client(
-      id: '2',
-      clientName: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      contact: '987-654-3210',
-      imageUrl: '',
-      shopAddress: '5678 Oak St, Springfield, IL',
-    ),
+        id: '2',
+        clientName: 'Jane Smith',
+        email: 'jane.smith@example.com',
+        contact: '987-654-3210',
+        imageUrl: '',
+        shopAddress: '5678 Oak St, Springfield, IL'),
   ];
 
   static List<Product> products = [
@@ -221,7 +218,9 @@ class Global {
       totalAmount: 10000.00,
       totalPayment: 7000.00,
       pendingPayment: 3000.00,
-      stock: 50, // Stock purchased
+      stock: 50,
+      // Stock purchased
+      createdAt: DateTime(2024, 1, 20), // Example date
     ),
     Purchase(
       purchaseId: 'PCH2',
@@ -231,6 +230,7 @@ class Global {
       totalPayment: 5000.00,
       pendingPayment: 0.00,
       stock: 20,
+      createdAt: DateTime(2024, 3, 18),
     ),
     Purchase(
       purchaseId: 'PCH3',
@@ -240,6 +240,7 @@ class Global {
       totalPayment: 4000.00,
       pendingPayment: 4000.00,
       stock: 10,
+      createdAt: DateTime(2024, 4, 16),
     ),
     Purchase(
       purchaseId: 'PCH4',
@@ -249,15 +250,17 @@ class Global {
       totalPayment: 6000.00,
       pendingPayment: 6000.00,
       stock: 5,
+      createdAt: DateTime(2024, 5, 15),
     ),
     Purchase(
       purchaseId: 'PCH5',
-      clientId: '3',
+      clientId: '2',
       productId: 'P1',
       totalAmount: 15000.00,
       totalPayment: 10000.00,
       pendingPayment: 5000.00,
       stock: 100,
+      createdAt: DateTime(2024, 12, 12),
     ),
   ];
 }

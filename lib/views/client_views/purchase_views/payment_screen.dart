@@ -22,7 +22,9 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  // Map to hold payment amounts for each purchase
   final Map<Purchase, double> _paymentAmounts = {};
+  bool isVisible = true;
 
   @override
   void initState() {
@@ -30,10 +32,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
     _initializePaymentAmounts();
   }
 
+  // Initialize payment amounts to 0.0 for each purchase
   void _initializePaymentAmounts() {
     for (var purchase in widget.purchases) {
       _paymentAmounts[purchase] = 0.0;
     }
+  }
+
+  // Check if all payment amounts are valid
+  bool _isPaymentValid() {
+    for (var purchase in widget.purchases) {
+      final paymentAmount = _paymentAmounts[purchase] ?? 0.0;
+      // If any payment amount exceeds the pending amount, return false
+      if (paymentAmount > purchase.pendingPayment) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
@@ -45,16 +60,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildClientInfo(),
-            _buildTotalPending(),
-            _buildPurchaseList(),
-            _buildConfirmPaymentButton(),
+            _buildClientInfo(), // Display client information
+            _buildTotalPending(), // Display total pending payment
+            _buildPurchaseList(), // Display the list of purchases
+            const SizedBox(height: 20),
+            // Show the confirm payment button if all amounts are valid
+            (isVisible) ? _buildConfirmPaymentButton() : Container(),
           ],
         ),
       ),
     );
   }
 
+  // Build widget to display client information
   Widget _buildClientInfo() {
     return Text(
       "Client: ${widget.client.clientName}",
@@ -62,6 +80,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
+  // Build widget to display total pending payment
   Widget _buildTotalPending() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -72,6 +91,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
+  // Build widget to display the list of purchases
   Widget _buildPurchaseList() {
     return Expanded(
       child: ListView.builder(
@@ -82,6 +102,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Global.products.firstWhere((p) => p.id == purchase.productId);
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -90,10 +113,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Text(
                     product.name,
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
-                      "Pending: Rs. ${purchase.pendingPayment.toStringAsFixed(2)}"),
+                    "Pending: Rs. ${purchase.pendingPayment.toStringAsFixed(2)}",
+                    style: const TextStyle(color: Colors.red),
+                  ),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,12 +130,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         width: 100,
                         child: TextFormField(
                           keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(), hintText: "Amount"),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            hintText: "Amount",
+                            isDense: true,
+                          ),
                           onChanged: (value) {
                             setState(() {
-                              _paymentAmounts[purchase] =
-                                  double.tryParse(value) ?? 0.0;
+                              isVisible = true;
+
+                              final amount = double.tryParse(value) ?? 0.0;
+                              // If the entered amount exceeds the pending amount, show an error and reset
+                              if (amount > purchase.pendingPayment) {
+                                isVisible = false;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Amount cannot exceed pending amount of Rs. ${purchase.pendingPayment.toStringAsFixed(2)}',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                // _paymentAmounts[purchase] = purchase
+                                //     .pendingPayment; // Set to max allowed
+                              } else {
+                                _paymentAmounts[purchase] =
+                                    amount; // Update payment amount
+                              }
                             });
                           },
                         ),
@@ -124,29 +174,54 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
+  // Build the confirm payment button
   Widget _buildConfirmPaymentButton() {
-    return ElevatedButton(
-      onPressed: _confirmPayment,
-      child: const Text('Confirm Payment'),
+    // Check if the button should be enabled
+    final isValid = _isPaymentValid();
+    return Center(
+      child: ElevatedButton(
+        onPressed: isValid ? _confirmPayment : null, // Enable only if valid
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: const Text(
+          'Confirm Payment',
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
     );
   }
 
-  double _calculateTotalPayment() {
-    return _paymentAmounts.values.fold(0.0, (sum, value) => sum + value);
-  }
-
+  // Confirm payment logic
   void _confirmPayment() {
-    final totalPayment = _calculateTotalPayment();
-
     for (var purchase in widget.purchases) {
       final paymentAmount = _paymentAmounts[purchase] ?? 0.0;
-      if (paymentAmount > 0) {
-        purchase.pendingPayment -= paymentAmount; // Deduct the payment
-        purchase.totalPayment += paymentAmount; // Update total payment
+      // Ensure no payment exceeds the pending amount
+      if (paymentAmount > purchase.pendingPayment) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error: Payment for ${purchase.productId} exceeds pending amount.',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return; // Stop if there's an error
       }
     }
 
-    widget.onPaymentConfirmed(); // Notify client details to refresh
-    Navigator.pop(context);
+    // Deduct the payment amounts from the pending payments
+    for (var purchase in widget.purchases) {
+      final paymentAmount = _paymentAmounts[purchase] ?? 0.0;
+      if (paymentAmount > 0) {
+        purchase.pendingPayment -= paymentAmount; // Deduct payment
+        purchase.totalPayment += paymentAmount; // Update total payment
+      }
+    }
+    widget.onPaymentConfirmed(); // Notify the client details to refresh
+    Navigator.pop(context); // Close the payment screen
   }
 }

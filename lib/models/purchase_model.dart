@@ -6,6 +6,7 @@ class Purchase {
   double totalPayment;
   double pendingPayment;
   final int stock;
+  DateTime createdAt;
 
   Purchase({
     required this.purchaseId,
@@ -15,5 +16,6 @@ class Purchase {
     required this.totalPayment, // Now mutable
     required this.pendingPayment, // Now mutable
     required this.stock,
+    required this.createdAt, // Initialize here
   });
 }

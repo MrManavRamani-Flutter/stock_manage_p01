@@ -18,10 +18,10 @@ class Sidebar extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const UserProfile()),
               );
             },
-            child: DrawerHeader(
+            child: const DrawerHeader(
               decoration: BoxDecoration(
                 color: AppColors.primaryColor,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(16),
                   bottomRight: Radius.circular(16),
                 ),
@@ -33,7 +33,7 @@ class Sidebar extends StatelessWidget {
                     radius: 30,
                     backgroundImage: AssetImage('assets/img/users/user_1.png'),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,24 +41,24 @@ class Sidebar extends StatelessWidget {
                       children: [
                         Text(
                           'Username', // Replace with actual username
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           'user@example.com', // Replace with actual email
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2),
                         Text(
                           '+1234567890', // Replace with actual contact
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                           ),
@@ -66,7 +66,7 @@ class Sidebar extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward_ios,
                     color: Colors.white70,
                     size: 16,
