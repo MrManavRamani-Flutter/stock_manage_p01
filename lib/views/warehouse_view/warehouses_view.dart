@@ -99,14 +99,9 @@ class _WarehousesViewState extends State<WarehousesView> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Add Category'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: categoryNameController,
-                decoration: const InputDecoration(labelText: 'Category Name'),
-              ),
-            ],
+          content: TextField(
+            controller: categoryNameController,
+            decoration: const InputDecoration(labelText: 'Category Name'),
           ),
           actions: [
             TextButton(
@@ -121,9 +116,8 @@ class _WarehousesViewState extends State<WarehousesView> {
                     warehouse.categories.add(
                       Category(
                         id: 'C${warehouse.categories.length + 1}',
-                        // Generate a unique ID
                         name: categoryName,
-                        totalProducts: 0, // Set initial total products to 0
+                        totalProducts: 0,
                       ),
                     );
                   });
@@ -145,23 +139,55 @@ class _WarehousesViewState extends State<WarehousesView> {
     });
   }
 
+  void _incrementProductCount(String warehouseId, String categoryId) {
+    setState(() {
+      final warehouse =
+          Global.warehouses.firstWhere((wh) => wh.id == warehouseId);
+      final category =
+          warehouse.categories.firstWhere((cat) => cat.id == categoryId);
+      category.totalProducts += 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const Sidebar(),
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
         title: const Text(
           'Warehouses',
           style: TextStyle(color: AppColors.white, fontSize: 20),
         ),
+        iconTheme: const IconThemeData(color: AppColors.white),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add, color: AppColors.white),
-            onPressed: _showAddWarehouseDialog,
+          InkWell(
+            onTap: _showAddWarehouseDialog,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0), // Adjust padding as needed
+              decoration: BoxDecoration(
+                // color: AppColors
+                //     .primaryColor, // Replace with your desired background color
+                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+              ),
+              child: const Row(
+                mainAxisSize:
+                    MainAxisSize.min, // Size only as much as the content needs
+                children: [
+                  Icon(Icons.add, color: AppColors.white), // Icon color
+                  SizedBox(width: 8.0), // Spacing between icon and text
+                  Text(
+                    'Add Warehouse',
+                    style: TextStyle(
+                        color: AppColors.white, fontSize: 16.0), // Text styling
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
-      drawer: const Sidebar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -178,6 +204,7 @@ class _WarehousesViewState extends State<WarehousesView> {
               child: _WarehouseDetail(
                 selectedWarehouse: _selectedWarehouse,
                 onAddCategory: _showAddCategoryDialog,
+                onIncrementProductCount: _incrementProductCount,
               ),
             ),
           ],
@@ -254,15 +281,22 @@ class _WarehouseList extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.location_on, size: 40, color: Colors.blue),
+                    const Icon(Icons.location_on,
+                        size: 40, color: AppColors.primaryColor),
                     const SizedBox(height: 8),
                     Text(
                       warehouse.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 4),
-                    Text(warehouse.location, textAlign: TextAlign.center),
+                    Text(
+                      warehouse.location,
+                      style: const TextStyle(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -274,58 +308,135 @@ class _WarehouseList extends StatelessWidget {
   }
 }
 
-// Widget for displaying Warehouse details and its categories
+// Widget for displaying Warehouse Details and Categories
 class _WarehouseDetail extends StatelessWidget {
   final Warehouse? selectedWarehouse;
-  final Future<void> Function(Warehouse) onAddCategory;
+  final Function(Warehouse) onAddCategory;
+  final Function(String, String) onIncrementProductCount;
 
   const _WarehouseDetail({
     required this.selectedWarehouse,
     required this.onAddCategory,
+    required this.onIncrementProductCount,
   });
 
   @override
   Widget build(BuildContext context) {
     if (selectedWarehouse == null) {
-      return const Center(
-        child: Text(
-          'Select a warehouse to view details',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-      );
+      return const Center(child: Text('Select a warehouse to view details.'));
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ElevatedButton.icon(
-          onPressed: () => onAddCategory(selectedWarehouse!),
-          icon: const Icon(Icons.add),
-          label: const Text('Add Category'),
-          style:
-              ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              selectedWarehouse!.name,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            InkWell(
+              onTap: () => onAddCategory(selectedWarehouse!),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0), // Adjust padding as needed
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor, // Change color as desired
+                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize
+                      .min, // Size only as much as the content needs
+                  children: [
+                    Icon(Icons.add, color: Colors.white), // Icon color
+                    SizedBox(width: 8.0), // Spacing between icon and text
+                    Text(
+                      'Add Category',
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 16.0), // Text styling
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
-        ...selectedWarehouse!.categories.map((category) {
-          return InkWell(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CategoryProductView(category: category),
-              ),
-            ),
-            child: Card(
-              elevation: 3,
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: ListTile(
-                title: Text(category.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('Total Products: ${category.totalProducts}'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-              ),
-            ),
-          );
-        }),
+        const SizedBox(height: 8),
+        Expanded(
+          child: ListView.builder(
+            itemCount: selectedWarehouse!.categories.length,
+            itemBuilder: (context, index) {
+              final category = selectedWarehouse!.categories[index];
+              return Card(
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CategoryProductView(
+                          warehouseId: selectedWarehouse!.id,
+                          categoryId: category.id,
+                          onProductAdded: () => onIncrementProductCount(
+                              selectedWarehouse!.id, category.id),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.category,
+                          size: 40,
+                          color: AppColors.primaryColor,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                category.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Total Products: ${category.totalProducts}',
+                                style: const TextStyle(
+                                  color: AppColors.gray,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward,
+                          color: AppColors.primaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

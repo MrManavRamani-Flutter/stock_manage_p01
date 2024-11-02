@@ -11,10 +11,10 @@ class EditClientView extends StatefulWidget {
   final Function(Client) onClientUpdated;
 
   const EditClientView({
-    Key? key,
+    super.key,
     required this.client,
     required this.onClientUpdated,
-  }) : super(key: key);
+  });
 
   @override
   EditClientViewState createState() => EditClientViewState();

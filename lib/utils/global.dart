@@ -257,7 +257,17 @@ class Global {
       totalPayment: 6000.00,
       pendingPayment: 6000.00,
       stock: 5,
-      createdAt: DateTime(2024, 4, 20),
+      createdAt: DateTime(2024, 9, 20),
+    ),
+    Purchase(
+      purchaseId: 'PCH5',
+      clientId: '1',
+      productId: 'P2',
+      totalAmount: 1200.00,
+      totalPayment: 600.00,
+      pendingPayment: 600.00,
+      stock: 5,
+      createdAt: DateTime(2023, 9, 20),
     ),
   ];
 }
