@@ -78,21 +78,28 @@ class CategoryProductViewState extends State<CategoryProductView> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                itemCount: _filteredProducts.length,
-                itemBuilder: (context, index) {
-                  final product = _filteredProducts[index];
-                  return ListTile(
-                    leading: Image.network(
-                      'https://via.placeholder.com/50',
-                      width: 50,
-                      height: 50,
+              child: _filteredProducts.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No products found',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = _filteredProducts[index];
+                        return ListTile(
+                          leading: Image.network(
+                            'https://via.placeholder.com/50',
+                            width: 50,
+                            height: 50,
+                          ),
+                          title: Text(product.name),
+                          subtitle: Text('Stock: ${product.stock}'),
+                        );
+                      },
                     ),
-                    title: Text(product.name),
-                    subtitle: Text('Stock: ${product.stock}'),
-                  );
-                },
-              ),
             ),
           ],
         ),

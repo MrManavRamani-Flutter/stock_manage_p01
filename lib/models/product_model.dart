@@ -7,15 +7,16 @@ class Product {
   final DateTime createdAt; // Creation date of the product
   final int wornLimitStock; // Minimum stock limit before a warning is triggered
   final String categoryId; // Category ID to which the product belongs
+  final String warehouseId; // Category ID to which the product belongs
 
-  Product({
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.stock,
-    required this.description,
-    required this.createdAt,
-    required this.wornLimitStock,
-    required this.categoryId,
-  });
+  Product(
+      {required this.id,
+      required this.name,
+      required this.price,
+      required this.stock,
+      required this.description,
+      required this.createdAt,
+      required this.wornLimitStock,
+      required this.categoryId,
+      required this.warehouseId});
 }

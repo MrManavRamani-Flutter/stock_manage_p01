@@ -118,15 +118,15 @@ class Global {
       id: 'W1',
       categories: [
         Category(
-            id: 'C1', // Add id for category
-            name: 'Category 1',
-            imageUrl: 'https://via.placeholder.com/50',
-            totalProducts: 100),
+          id: 'C1',
+          name: 'Category 1',
+          totalProducts: 2, // Total products in this category
+        ),
         Category(
-            id: 'C2',
-            name: 'Category 2',
-            imageUrl: 'https://via.placeholder.com/50',
-            totalProducts: 200),
+          id: 'C2',
+          name: 'Category 2',
+          totalProducts: 1,
+        ),
       ],
     ),
     Warehouse(
@@ -135,10 +135,10 @@ class Global {
       id: 'W2',
       categories: [
         Category(
-            id: 'C3',
-            name: 'Category 3',
-            imageUrl: 'https://via.placeholder.com/50',
-            totalProducts: 150),
+          id: 'C3',
+          name: 'Category 3',
+          totalProducts: 1,
+        ),
       ],
     ),
   ];
@@ -177,6 +177,8 @@ class Global {
       createdAt: DateTime.now(),
       wornLimitStock: 5,
       categoryId: 'C1',
+      // Associate with Category 1
+      warehouseId: 'W1', // Associate with Warehouse 1
     ),
     Product(
       id: 'P2',
@@ -187,6 +189,8 @@ class Global {
       createdAt: DateTime.now(),
       wornLimitStock: 5,
       categoryId: 'C1',
+      // Associate with Category 1
+      warehouseId: 'W1', // Associate with Warehouse 1
     ),
     Product(
       id: 'P3',
@@ -197,6 +201,8 @@ class Global {
       createdAt: DateTime.now(),
       wornLimitStock: 3,
       categoryId: 'C2',
+      // Associate with Category 2
+      warehouseId: 'W1', // Associate with Warehouse 1
     ),
     Product(
       id: 'P4',
@@ -207,6 +213,8 @@ class Global {
       createdAt: DateTime.now(),
       wornLimitStock: 2,
       categoryId: 'C3',
+      // Associate with Category 3
+      warehouseId: 'W2', // Associate with Warehouse 2
     ),
   ];
 
@@ -219,7 +227,6 @@ class Global {
       totalPayment: 7000.00,
       pendingPayment: 3000.00,
       stock: 50,
-      // Stock purchased
       createdAt: DateTime(2024, 1, 20), // Example date
     ),
     Purchase(
@@ -250,17 +257,7 @@ class Global {
       totalPayment: 6000.00,
       pendingPayment: 6000.00,
       stock: 5,
-      createdAt: DateTime(2024, 5, 15),
-    ),
-    Purchase(
-      purchaseId: 'PCH5',
-      clientId: '2',
-      productId: 'P1',
-      totalAmount: 15000.00,
-      totalPayment: 10000.00,
-      pendingPayment: 5000.00,
-      stock: 100,
-      createdAt: DateTime(2024, 12, 12),
+      createdAt: DateTime(2024, 4, 20),
     ),
   ];
 }

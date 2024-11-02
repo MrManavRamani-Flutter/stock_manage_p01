@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stock_manage/constants/app_colors.dart';
+import 'package:stock_manage/models/category_model.dart';
 import 'package:stock_manage/models/warehouse_model.dart';
 import 'package:stock_manage/utils/global.dart';
 import 'package:stock_manage/views/warehouse_view/category_product_view.dart';
@@ -28,17 +29,10 @@ class _WarehousesViewState extends State<WarehousesView> {
     setState(() {
       final query = _searchController.text.toLowerCase();
       _filteredWarehouses = Global.warehouses.where((warehouse) {
-        final name = warehouse.name.toLowerCase();
-        final location = warehouse.location.toLowerCase();
-        return name.contains(query) || location.contains(query);
+        return warehouse.name.toLowerCase().contains(query) ||
+            warehouse.location.toLowerCase().contains(query);
       }).toList();
     });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   void _onWarehouseSelected(Warehouse warehouse) {
@@ -47,52 +41,11 @@ class _WarehousesViewState extends State<WarehousesView> {
     });
   }
 
-  Widget _buildWarehouseDetail() {
-    if (_selectedWarehouse == null) {
-      return const Center(
-        child: Text(
-          'Select a warehouse to view details',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-      );
-    }
+  Future<void> _showAddWarehouseDialog() async {
+    final nameController = TextEditingController();
+    final locationController = TextEditingController();
 
-    final categories = _selectedWarehouse!
-        .categories; // Assuming the warehouse model has categories
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: categories.map((category) {
-        return InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CategoryProductView(category: category),
-              ),
-            );
-          },
-          child: Card(
-            elevation: 3,
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: ListTile(
-              leading: Image.network(category.imageUrl,
-                  width: 50, height: 50), // Assuming category has an image URL
-              title: Text(category.name),
-              subtitle: Text(
-                  'Total Products: ${category.totalProducts}'), // Assuming totalProducts field
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  void _showAddWarehouseDialog(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController locationController = TextEditingController();
-
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -112,23 +65,71 @@ class _WarehousesViewState extends State<WarehousesView> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
-                // Add the warehouse to the list
-                Global.warehouses.add(
-                  Warehouse(
-                    id: 'W${Global.warehouses.length + 1}', // Generate a new id
-                    name: nameController.text,
-                    location: locationController.text,
-                    categories: [], // Empty list for categories initially
-                  ),
-                );
+                setState(() {
+                  Global.warehouses.add(
+                    Warehouse(
+                      id: 'W${Global.warehouses.length + 1}',
+                      name: nameController.text,
+                      location: locationController.text,
+                      categories: [],
+                    ),
+                  );
+                });
                 Navigator.of(context).pop();
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+    _refreshWarehouseData();
+  }
+
+  Future<void> _showAddCategoryDialog(Warehouse warehouse) async {
+    final categoryNameController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add Category'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: categoryNameController,
+                decoration: const InputDecoration(labelText: 'Category Name'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final categoryName = categoryNameController.text.trim();
+                if (categoryName.isNotEmpty) {
+                  setState(() {
+                    warehouse.categories.add(
+                      Category(
+                        id: 'C${warehouse.categories.length + 1}',
+                        // Generate a unique ID
+                        name: categoryName,
+                        totalProducts: 0, // Set initial total products to 0
+                      ),
+                    );
+                  });
+                  Navigator.of(context).pop();
+                  _refreshWarehouseData();
+                }
               },
               child: const Text('Add'),
             ),
@@ -138,6 +139,12 @@ class _WarehousesViewState extends State<WarehousesView> {
     );
   }
 
+  void _refreshWarehouseData() {
+    setState(() {
+      _filteredWarehouses = Global.warehouses;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,31 +152,13 @@ class _WarehousesViewState extends State<WarehousesView> {
         backgroundColor: AppColors.primaryColor,
         title: const Text(
           'Warehouses',
-          style: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: TextStyle(color: AppColors.white, fontSize: 20),
         ),
-        iconTheme: const IconThemeData(color: AppColors.white),
         actions: [
-          ElevatedButton.icon(
-            onPressed: () => _showAddWarehouseDialog(context),
-            icon: const Icon(Icons.add, color: AppColors.primaryColor),
-            label: const Text(
-              'Add',
-              style: TextStyle(color: AppColors.primaryColor),
-            ),
-            style: ElevatedButton.styleFrom(
-              fixedSize: const Size.fromWidth(100),
-              backgroundColor: AppColors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            ),
+          IconButton(
+            icon: const Icon(Icons.add, color: AppColors.white),
+            onPressed: _showAddWarehouseDialog,
           ),
-          const SizedBox(width: 16),
         ],
       ),
       drawer: const Sidebar(),
@@ -178,82 +167,166 @@ class _WarehousesViewState extends State<WarehousesView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search Bar
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search Warehouses...',
-                  prefixIcon: const Icon(Icons.search, color: AppColors.gray),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.gray),
-                  ),
-                ),
-              ),
-            ),
+            _SearchBar(searchController: _searchController),
             const SizedBox(height: 16),
-
-            // Horizontal Scrollable List of Warehouses
-            SizedBox(
-              height: 150, // Adjust as per design
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _filteredWarehouses.length,
-                itemBuilder: (context, index) {
-                  final warehouse = _filteredWarehouses[index];
-                  return GestureDetector(
-                    onTap: () => _onWarehouseSelected(warehouse),
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Container(
-                        width: 150, // Adjust size as per design
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.location_on,
-                                size: 40, color: Colors.blue),
-                            const SizedBox(height: 8),
-                            Text(
-                              warehouse.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(warehouse.location,
-                                textAlign: TextAlign.center),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+            _WarehouseList(
+              warehouses: _filteredWarehouses,
+              onWarehouseSelected: _onWarehouseSelected,
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: _buildWarehouseDetail(),
+              child: _WarehouseDetail(
+                selectedWarehouse: _selectedWarehouse,
+                onAddCategory: _showAddCategoryDialog,
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+// Widget for the Search Bar
+class _SearchBar extends StatelessWidget {
+  final TextEditingController searchController;
+
+  const _SearchBar({required this.searchController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: searchController,
+        decoration: InputDecoration(
+          hintText: 'Search Warehouses...',
+          prefixIcon: const Icon(Icons.search, color: AppColors.gray),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Widget for the horizontally scrollable Warehouse List
+class _WarehouseList extends StatelessWidget {
+  final List<Warehouse> warehouses;
+  final Function(Warehouse) onWarehouseSelected;
+
+  const _WarehouseList({
+    required this.warehouses,
+    required this.onWarehouseSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 150,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: warehouses.length,
+        itemBuilder: (context, index) {
+          final warehouse = warehouses[index];
+          return GestureDetector(
+            onTap: () => onWarehouseSelected(warehouse),
+            child: Card(
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                width: 150,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.location_on, size: 40, color: Colors.blue),
+                    const SizedBox(height: 8),
+                    Text(
+                      warehouse.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(warehouse.location, textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Widget for displaying Warehouse details and its categories
+class _WarehouseDetail extends StatelessWidget {
+  final Warehouse? selectedWarehouse;
+  final Future<void> Function(Warehouse) onAddCategory;
+
+  const _WarehouseDetail({
+    required this.selectedWarehouse,
+    required this.onAddCategory,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (selectedWarehouse == null) {
+      return const Center(
+        child: Text(
+          'Select a warehouse to view details',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () => onAddCategory(selectedWarehouse!),
+          icon: const Icon(Icons.add),
+          label: const Text('Add Category'),
+          style:
+              ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+        ),
+        const SizedBox(height: 16),
+        ...selectedWarehouse!.categories.map((category) {
+          return InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryProductView(category: category),
+              ),
+            ),
+            child: Card(
+              elevation: 3,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                title: Text(category.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text('Total Products: ${category.totalProducts}'),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 }

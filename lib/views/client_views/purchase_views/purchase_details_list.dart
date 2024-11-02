@@ -60,6 +60,7 @@ class PurchaseDetailsListState extends State<PurchaseDetailsList> {
         createdAt: DateTime.now(),
         wornLimitStock: 0,
         categoryId: 'N/A',
+        warehouseId: 'N/A', // Provide a default value for warehouseId
       ),
     );
   }
