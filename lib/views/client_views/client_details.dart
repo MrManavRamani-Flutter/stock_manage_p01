@@ -5,6 +5,7 @@ import 'package:stock_manage/models/purchase_model.dart';
 import 'package:stock_manage/models/purchase_summary.dart';
 import 'package:stock_manage/utils/global.dart';
 import 'package:stock_manage/views/client_views/client_update.dart';
+import 'package:stock_manage/views/client_views/generate_bill/generate_bill_view.dart';
 import 'package:stock_manage/views/client_views/purchase_views/payment_screen.dart';
 import 'package:stock_manage/views/client_views/purchase_views/purchase_details_list.dart';
 import 'package:stock_manage/views/client_views/widgets/client_info_card.dart';
@@ -107,7 +108,13 @@ class _ClientDetailsState extends State<ClientDetails> {
             amount: summary.totalAmount.toStringAsFixed(2),
             color: AppColors.accentColor,
           ),
-          _buildPayPendingButton(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildPayPendingButton(),
+              _buildGenerateBillButton(),
+            ],
+          ),
           const SizedBox(height: 20),
           const Text(
             "Purchase Details",
@@ -160,6 +167,24 @@ class _ClientDetailsState extends State<ClientDetails> {
     ).then((_) {
       _fetchClientPurchases();
     });
+  }
+
+  Widget _buildGenerateBillButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: _generateBill,
+        child: const Text("Generate Bill"),
+      ),
+    );
+  }
+
+  void _generateBill() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GenerateBillView(client: widget.client),
+      ),
+    );
   }
 
   PurchaseSummary _calculatePurchasesSummary(List<Purchase> purchases) {
