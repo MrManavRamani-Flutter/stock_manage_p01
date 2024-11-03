@@ -10,9 +10,9 @@ import '../models/warehouse_model.dart';
 class Global {
   static List<Employee> employees = [
     Employee(
+      id: 'E1', // Added employee ID
       name: 'John Doe',
       role: 'Manager',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'john.doe@example.com',
       contactNumber: '123-456-7890',
       presentCount: 220,
@@ -20,9 +20,9 @@ class Global {
       absentWithoutLeaveCount: 2,
     ),
     Employee(
+      id: 'E2', // Added employee ID
       name: 'Jane Smith',
       role: 'Developer',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'jane.smith@example.com',
       contactNumber: '234-567-8901',
       presentCount: 215,
@@ -30,9 +30,9 @@ class Global {
       absentWithoutLeaveCount: 1,
     ),
     Employee(
+      id: 'E3', // Added employee ID
       name: 'Alice Johnson',
       role: 'Inventory Specialist',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'alice.johnson@example.com',
       contactNumber: '345-678-9012',
       presentCount: 218,
@@ -40,9 +40,9 @@ class Global {
       absentWithoutLeaveCount: 0,
     ),
     Employee(
+      id: 'E4', // Added employee ID
       name: 'Michael Brown',
       role: 'Warehouse Supervisor',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'michael.brown@example.com',
       contactNumber: '456-789-0123',
       presentCount: 210,
@@ -50,9 +50,9 @@ class Global {
       absentWithoutLeaveCount: 2,
     ),
     Employee(
+      id: 'E5', // Added employee ID
       name: 'Emily Davis',
       role: 'Sales Associate',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'emily.davis@example.com',
       contactNumber: '567-890-1234',
       presentCount: 230,
@@ -60,9 +60,9 @@ class Global {
       absentWithoutLeaveCount: 1,
     ),
     Employee(
+      id: 'E6', // Added employee ID
       name: 'David Wilson',
       role: 'Logistics Coordinator',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'david.wilson@example.com',
       contactNumber: '678-901-2345',
       presentCount: 225,
@@ -70,9 +70,9 @@ class Global {
       absentWithoutLeaveCount: 3,
     ),
     Employee(
+      id: 'E7', // Added employee ID
       name: 'Sophia Martinez',
       role: 'Quality Control Inspector',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'sophia.martinez@example.com',
       contactNumber: '789-012-3456',
       presentCount: 220,
@@ -80,9 +80,9 @@ class Global {
       absentWithoutLeaveCount: 1,
     ),
     Employee(
+      id: 'E8', // Added employee ID
       name: 'James Lee',
       role: 'Procurement Officer',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'james.lee@example.com',
       contactNumber: '890-123-4567',
       presentCount: 200,
@@ -90,9 +90,9 @@ class Global {
       absentWithoutLeaveCount: 5,
     ),
     Employee(
+      id: 'E9', // Added employee ID
       name: 'Olivia Garcia',
       role: 'Customer Service Representative',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'olivia.garcia@example.com',
       contactNumber: '901-234-5678',
       presentCount: 215,
@@ -100,9 +100,9 @@ class Global {
       absentWithoutLeaveCount: 0,
     ),
     Employee(
+      id: 'E10', // Added employee ID
       name: 'William Harris',
       role: 'Store Manager',
-      imageUrl: 'https://via.placeholder.com/150',
       email: 'william.harris@example.com',
       contactNumber: '012-345-6789',
       presentCount: 220,

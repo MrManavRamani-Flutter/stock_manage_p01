@@ -47,29 +47,30 @@ class BottomNavigationState extends State<BottomNavigation> {
           items: const [
             BottomNavigationBarItem(
               backgroundColor: AppColors.white,
-              icon: Icon(Icons.people),
+              icon: Icon(Icons.person), // For Clients
               label: 'Clients',
             ),
             BottomNavigationBarItem(
               backgroundColor: AppColors.white,
-              icon: Icon(Icons.warehouse),
+              icon: Icon(Icons.store), // For Warehouses
               label: 'Warehouses',
             ),
             BottomNavigationBarItem(
               backgroundColor: AppColors.white,
-              icon: Icon(Icons.dashboard),
-              label: 'Profile',
+              icon: Icon(Icons.dashboard), // For Dashboard
+              label: 'Dashboard',
             ),
             BottomNavigationBarItem(
               backgroundColor: AppColors.white,
-              icon: Icon(Icons.category),
+              icon: Icon(Icons.group), // For Employees
               label: 'Employees',
             ),
             BottomNavigationBarItem(
               backgroundColor: AppColors.white,
-              icon: Icon(Icons.receipt_long),
+              icon: Icon(Icons.receipt_long), // For Orders
               label: 'Orders', // New Order option
             ),
+
             // BottomNavigationBarItem(
             //   backgroundColor: AppColors.white,
             //   icon: Icon(Icons.perm_contact_cal_sharp),

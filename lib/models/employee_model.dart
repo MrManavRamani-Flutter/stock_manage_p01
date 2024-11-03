@@ -1,21 +1,21 @@
 class Employee {
-  final String name;
-  final String role;
-  final String imageUrl;
-  final String email;
-  final String contactNumber;
-  final int presentCount;
-  final int absentWithLeaveCount;
-  final int absentWithoutLeaveCount;
+  String id;
+  String name;
+  String role;
+  String email;
+  String contactNumber;
+  int presentCount;
+  int absentWithLeaveCount;
+  int absentWithoutLeaveCount;
 
   Employee({
+    required this.id,
     required this.name,
     required this.role,
-    required this.imageUrl,
     required this.email,
     required this.contactNumber,
-    required this.presentCount,
-    required this.absentWithLeaveCount,
-    required this.absentWithoutLeaveCount,
+    this.presentCount = 0,
+    this.absentWithLeaveCount = 0,
+    this.absentWithoutLeaveCount = 0,
   });
 }

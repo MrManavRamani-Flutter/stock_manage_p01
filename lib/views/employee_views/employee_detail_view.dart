@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stock_manage/constants/app_colors.dart';
 import 'package:stock_manage/models/employee_model.dart';
+import 'package:stock_manage/views/employee_views/employee_edit_view.dart';
 
 class EmployeeDetailView extends StatelessWidget {
   final Employee employee;
@@ -12,31 +13,34 @@ class EmployeeDetailView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        title: Text(
-          employee.name,
-          style: const TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
+        title: Text(employee.name,
+            style: const TextStyle(
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20)),
         iconTheme: const IconThemeData(color: AppColors.white),
         actions: [
           ElevatedButton.icon(
-            onPressed: () {
-              // Handle edit functionality
+            onPressed: () async {
+              final updatedEmployee = await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => EditEmployeeView(employee: employee),
+                ),
+              );
+
+              if (updatedEmployee != null) {
+                Navigator.of(context)
+                    .pop(updatedEmployee); // Return updated employee
+              }
             },
             icon: const Icon(Icons.edit, color: AppColors.primaryColor),
-            label: const Text(
-              'Edit',
-              style: TextStyle(color: AppColors.primaryColor),
-            ),
+            label: const Text('Edit',
+                style: TextStyle(color: AppColors.primaryColor)),
             style: ElevatedButton.styleFrom(
               fixedSize: const Size.fromWidth(100),
               backgroundColor: AppColors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+                  borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
@@ -48,53 +52,22 @@ class EmployeeDetailView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Profile Image
-            Center(
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(employee.imageUrl),
-              ),
-            ),
             const SizedBox(height: 16),
-
-            // Employee Name
             Center(
-              child: Text(
-                employee.name,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
+                child: Text(employee.name,
+                    style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87))),
             const SizedBox(height: 8),
-
-            // Employee Email
             Center(
-              child: Text(
-                employee.email,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
+                child: Text(employee.email,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey))),
             const SizedBox(height: 8),
-
-            // Employee Contact Number
             Center(
-              child: Text(
-                employee.contactNumber,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
+                child: Text(employee.contactNumber,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey))),
             const SizedBox(height: 24),
-
-            // Counts Section - Present, Absent with Leave, Absent without Leave
             Column(
               children: [
                 _buildFullWidthCountColumn(
@@ -107,7 +80,6 @@ class EmployeeDetailView extends StatelessWidget {
                     employee.absentWithoutLeaveCount, Colors.red.shade100),
               ],
             ),
-
             const SizedBox(height: 24),
           ],
         ),
@@ -115,35 +87,24 @@ class EmployeeDetailView extends StatelessWidget {
     );
   }
 
-  // Helper widget for displaying the count sections with background color and full width
   Widget _buildFullWidthCountColumn(
       String label, int count, Color backgroundColor) {
     return Container(
-      width: double.infinity, // Takes full width
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$count',
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
-          ),
+          Text(label,
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Text(count.toString(),
+              style:
+                  const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
         ],
       ),
     );

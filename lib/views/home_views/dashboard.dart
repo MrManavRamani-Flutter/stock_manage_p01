@@ -203,8 +203,8 @@ class _DashboardState extends State<Dashboard> {
         _buildSection(
             "Employees",
             Global.employees.map((employee) => ListTile(
-                  leading: CircleAvatar(
-                      backgroundImage: NetworkImage(employee.imageUrl)),
+                  // leading: CircleAvatar(
+                  //     backgroundImage: NetworkImage(employee.imageUrl)),
                   title: Text(employee.name),
                   subtitle: Text('${employee.role} | ${employee.email}'),
                   trailing: Column(
