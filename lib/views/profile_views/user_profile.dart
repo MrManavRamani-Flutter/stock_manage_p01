@@ -26,7 +26,6 @@ class UserProfile extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      // drawer: const Sidebar(), // Assuming Sidebar is defined elsewhere
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -43,14 +42,15 @@ class UserProfile extends StatelessWidget {
                       Text(
                         'Username', // Replace with actual username
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      Text('Role: User Role'),
-                      // Replace with actual role
-                      Text('Email: user@example.com'),
-                      // Replace with actual email
-                      Text('Contact: +1234567890'),
-                      // Replace with actual contact
+                      Text('Role: User Role'), // Replace with actual role
+                      Text(
+                          'Email: user@example.com'), // Replace with actual email
+                      Text(
+                          'Contact: +1234567890'), // Replace with actual contact
                     ],
                   ),
                 ),
@@ -67,9 +67,7 @@ class UserProfile extends StatelessWidget {
             const SizedBox(height: 30),
             // Statistics Section
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 1.7,
+              child: ListView(
                 children: [
                   _buildStatCard(
                       'Employees Count', Global.employees.length.toString()),
@@ -126,7 +124,7 @@ class UserProfile extends StatelessWidget {
   Widget _buildStatCard(String title, String value) {
     return Card(
       elevation: 4,
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(vertical: 8), // Adjust vertical margin
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

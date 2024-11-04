@@ -107,7 +107,7 @@ class _GenerateBillViewState extends State<GenerateBillView> {
       itemBuilder: (context, index) {
         final purchase = purchases[index];
         final product =
-        Global.products.firstWhere((prod) => prod.id == purchase.productId);
+            Global.products.firstWhere((prod) => prod.id == purchase.productId);
 
         return ListTile(
           title: Text('Product: ${product.name}'),
@@ -115,7 +115,7 @@ class _GenerateBillViewState extends State<GenerateBillView> {
             'Total Amount: \$${purchase.totalAmount.toStringAsFixed(2)} - Paid: \$${purchase.totalPayment.toStringAsFixed(2)}',
           ),
           trailing:
-          Text('Pending: \$${purchase.pendingPayment.toStringAsFixed(2)}'),
+              Text('Pending: \$${purchase.pendingPayment.toStringAsFixed(2)}'),
         );
       },
     );
@@ -139,24 +139,30 @@ class _GenerateBillViewState extends State<GenerateBillView> {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('Client Details', style: pw.TextStyle(fontSize: 24)),
+              pw.Text('Client Details',
+                  style: const pw.TextStyle(fontSize: 24)),
               pw.Text('Name: ${widget.client.clientName}'),
               pw.Text('Email: ${widget.client.email}'),
               pw.Text('Contact: ${widget.client.contact}'),
               pw.SizedBox(height: 20),
-              pw.Text('Purchase Details', style: pw.TextStyle(fontSize: 20)),
+              pw.Text('Purchase Details',
+                  style: const pw.TextStyle(fontSize: 20)),
               pw.ListView.builder(
                 itemCount: getFilteredPurchases().length,
                 itemBuilder: (context, index) {
                   final purchase = getFilteredPurchases()[index];
-                  final product = Global.products.firstWhere((prod) => prod.id == purchase.productId);
+                  final product = Global.products
+                      .firstWhere((prod) => prod.id == purchase.productId);
                   return pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
                       pw.Text(product.name),
-                      pw.Text('Total: \$${purchase.totalAmount.toStringAsFixed(2)}'),
-                      pw.Text('Paid: \$${purchase.totalPayment.toStringAsFixed(2)}'),
-                      pw.Text('Pending: \$${purchase.pendingPayment.toStringAsFixed(2)}'),
+                      pw.Text(
+                          'Total: \$${purchase.totalAmount.toStringAsFixed(2)}'),
+                      pw.Text(
+                          'Paid: \$${purchase.totalPayment.toStringAsFixed(2)}'),
+                      pw.Text(
+                          'Pending: \$${purchase.pendingPayment.toStringAsFixed(2)}'),
                     ],
                   );
                 },
@@ -167,6 +173,7 @@ class _GenerateBillViewState extends State<GenerateBillView> {
       ),
     );
 
-    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save());
   }
 }

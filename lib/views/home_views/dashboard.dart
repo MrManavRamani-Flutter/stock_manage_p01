@@ -13,16 +13,15 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int selectedYear = DateTime.now().year;
+  int? selectedYear;
+  int? selectedMonth;
   List<int> years = [];
+  List<int> months = List.generate(12, (index) => index + 1);
 
   @override
   void initState() {
     super.initState();
     years = _getYears();
-    if (!years.contains(selectedYear)) {
-      selectedYear = years.isNotEmpty ? years.last : DateTime.now().year;
-    }
   }
 
   List<int> _getYears() {
@@ -31,50 +30,87 @@ class _DashboardState extends State<Dashboard> {
     return uniqueYears.toList()..sort();
   }
 
-  List<SalesData> getMonthlySalesData() {
-    Map<int, double> monthlySales = {};
+  List<SalesData> getFilteredSalesData() {
+    Map<double, double> filteredSales = {}; // Use double as key type
+
     for (var purchase in Global.purchases) {
-      if (purchase.createdAt.year == selectedYear) {
-        final month = purchase.createdAt.month;
-        monthlySales[month] = (monthlySales[month] ?? 0) + purchase.totalAmount;
+      bool yearMatches =
+          selectedYear == null || purchase.createdAt.year == selectedYear;
+      bool monthMatches =
+          selectedMonth == null || purchase.createdAt.month == selectedMonth;
+
+      if (yearMatches && monthMatches) {
+        double timeKey; // Change type to double
+
+        // Determine data grouping based on filter selection
+        if (selectedMonth != null) {
+          // Month selected, show day-wise data
+          timeKey = purchase.createdAt.day.toDouble(); // Use day as double
+        } else if (selectedYear != null) {
+          // Year selected, show month-wise data
+          timeKey = purchase.createdAt.month.toDouble(); // Use month as double
+        } else {
+          // Default to year-wise if all selected
+          timeKey = purchase.createdAt.year.toDouble(); // Use year as double
+        }
+
+        filteredSales[timeKey] =
+            (filteredSales[timeKey] ?? 0) + purchase.totalAmount;
       }
     }
 
-    if (monthlySales.isEmpty) {
-      return List.generate(12, (index) => SalesData((index + 1).toDouble(), 0));
-    }
+    // Sort the filtered sales data based on timeKey
+    var sortedSales = filteredSales.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
 
-    return monthlySales.entries
-        .map((entry) => SalesData(entry.key.toDouble(), entry.value))
+    // Return the processed sales data
+    return sortedSales
+        .map((entry) => SalesData(
+            entry.key, entry.value)) // This line maps to SalesData objects
         .toList();
   }
 
   Widget _buildGraphSection() {
-    final salesData = getMonthlySalesData();
+    final salesData = getFilteredSalesData();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Sales Over Time",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        _buildYearDropdown(),
+        _buildFilterSection(),
         const SizedBox(height: 10),
+        if (salesData.isEmpty)
+          Center(
+            child: Text(
+              'No sales data available for the selected filters.',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+          ),
         AspectRatio(
           aspectRatio: 1.5,
           child: SfCartesianChart(
             primaryXAxis: NumericAxis(
-              title: AxisTitle(text: 'Month'),
+              title: AxisTitle(
+                text: selectedMonth != null
+                    ? 'Days'
+                    : 'Months', // Update label based on selection
+              ),
               interval: 1,
               labelFormat: '{value}',
             ),
             primaryYAxis: NumericAxis(
               title: AxisTitle(text: 'Sales Amount'),
-              labelFormat: '{value}\$',
+              labelFormat: '{value} Rs.',
             ),
             series: <ChartSeries>[
               LineSeries<SalesData, double>(
+                // Change the xValueMapper type to double
                 dataSource: salesData,
                 xValueMapper: (SalesData sales, _) => sales.time,
                 yValueMapper: (SalesData sales, _) => sales.sales,
@@ -85,7 +121,7 @@ class _DashboardState extends State<Dashboard> {
             ],
             tooltipBehavior: TooltipBehavior(
               enable: true,
-              format: 'point.x: point.y\$',
+              format: 'point.x: point.y Rs.',
             ),
           ),
         ),
@@ -93,20 +129,55 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _buildYearDropdown() {
-    return DropdownButton<int>(
-      value: selectedYear,
-      onChanged: (newYear) {
-        setState(() {
-          selectedYear = newYear!;
-        });
-      },
-      items: years.map((year) {
-        return DropdownMenuItem<int>(
-          value: year,
-          child: Text(year.toString()),
-        );
-      }).toList(),
+  Widget _buildFilterSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildDropdown(
+          label: 'Year',
+          value: selectedYear,
+          items: years,
+          onChanged: (int? newYear) {
+            setState(() {
+              selectedYear = newYear;
+              selectedMonth = null; // Reset month when year changes
+            });
+          },
+        ),
+        _buildDropdown(
+          label: 'Month',
+          value: selectedMonth,
+          items: months,
+          onChanged: (int? newMonth) {
+            setState(() {
+              selectedMonth = newMonth;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown({
+    required String label,
+    required int? value,
+    required List<int> items,
+    required ValueChanged<int?> onChanged,
+  }) {
+    return Column(
+      children: [
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        DropdownButton<int>(
+          value: value,
+          onChanged: onChanged,
+          items: [null, ...items].map((item) {
+            return DropdownMenuItem<int>(
+              value: item,
+              child: Text(item == null ? 'All' : item.toString()),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -116,7 +187,7 @@ class _DashboardState extends State<Dashboard> {
       drawer: const Sidebar(),
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -126,7 +197,6 @@ class _DashboardState extends State<Dashboard> {
             const SizedBox(height: 20),
             _buildGraphSection(),
             const SizedBox(height: 20),
-            _buildDetailedSections(),
           ],
         ),
       ),
@@ -141,7 +211,6 @@ class _DashboardState extends State<Dashboard> {
         style: TextStyle(
           color: AppColors.white,
           fontWeight: FontWeight.bold,
-          fontSize: 20,
         ),
       ),
       iconTheme: const IconThemeData(color: AppColors.white),
@@ -149,16 +218,20 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _buildHeader() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Welcome to the Dashboard",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
+        const SizedBox(height: 4),
         Text(
           "Overview of your stock management",
-          style: TextStyle(fontSize: 16),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],
     );
@@ -187,92 +260,18 @@ class _DashboardState extends State<Dashboard> {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            Text(count.toString(), style: const TextStyle(fontSize: 24)),
+            Text(
+              count.toString(),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailedSections() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSection(
-            "Employees",
-            Global.employees.map((employee) => ListTile(
-                  // leading: CircleAvatar(
-                  //     backgroundImage: NetworkImage(employee.imageUrl)),
-                  title: Text(employee.name),
-                  subtitle: Text('${employee.role} | ${employee.email}'),
-                  trailing: Column(
-                    children: [
-                      Text("Present: ${employee.presentCount}"),
-                      Text(
-                          "Absent: ${employee.absentWithLeaveCount + employee.absentWithoutLeaveCount}"),
-                    ],
-                  ),
-                ))),
-        _buildSection(
-            "Warehouses",
-            Global.warehouses.map((warehouse) => ListTile(
-                  title: Text(warehouse.name),
-                  subtitle: Text("Location: ${warehouse.location}"),
-                  trailing: Text("Categories: ${warehouse.categories.length}"),
-                ))),
-        _buildSection(
-            "Orders",
-            Global.orders.map((order) => ListTile(
-                  title: Text("Order ID: ${order.orderID}"),
-                  subtitle: Text("Status: ${order.status}"),
-                  trailing: Text("Date: ${order.date}"),
-                ))),
-        _buildSection(
-            "Clients",
-            Global.clients.map((client) => ListTile(
-                  leading: client.imageUrl!.isNotEmpty
-                      ? CircleAvatar(
-                          backgroundImage: NetworkImage(client.imageUrl!))
-                      : CircleAvatar(child: Text(client.clientName[0])),
-                  title: Text(client.clientName),
-                  subtitle: Text(client.email),
-                  trailing: Text("Contact: ${client.contact}"),
-                ))),
-        _buildSection(
-            "Products",
-            Global.products.map((product) => ListTile(
-                  title: Text(product.name),
-                  subtitle: Text(
-                      "Stock: ${product.stock} | Price: \$${product.price}"),
-                  trailing: Text("Category: ${product.categoryId}"),
-                ))),
-        _buildSection(
-            "Purchases",
-            Global.purchases.map((purchase) => ListTile(
-                  title: Text("Purchase ID: ${purchase.purchaseId}"),
-                  subtitle: Text(
-                      "Client ID: ${purchase.clientId} | Product ID: ${purchase.productId}"),
-                  trailing: Text(
-                      "Pending: \$${purchase.pendingPayment} / Total: \$${purchase.totalAmount}"),
-                ))),
-      ],
-    );
-  }
-
-  Widget _buildSection(String title, Iterable<Widget> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        ...items,
-        const SizedBox(height: 20),
-      ],
     );
   }
 }
