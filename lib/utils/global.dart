@@ -406,7 +406,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_01_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 5500.00,
       totalPayment: 3000.00,
       pendingPayment: 2500.00,
@@ -416,7 +416,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_01_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 8000.00,
       totalPayment: 4000.00,
       pendingPayment: 4000.00,
@@ -426,7 +426,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_01_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 6000.00,
       totalPayment: 6000.00,
       pendingPayment: 0.00,
@@ -436,7 +436,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_01_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 9500.00,
       totalPayment: 9500.00,
       pendingPayment: 0.00,
@@ -446,7 +446,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_01_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 4000.00,
       totalPayment: 4000.00,
       pendingPayment: 0.00,
@@ -507,7 +507,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_02_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 8000.00,
       totalPayment: 3000.00,
       pendingPayment: 5000.00,
@@ -517,7 +517,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_02_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 6500.00,
       totalPayment: 6500.00,
       pendingPayment: 0.00,
@@ -527,7 +527,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_02_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 5000.00,
       totalPayment: 5000.00,
       pendingPayment: 0.00,
@@ -537,7 +537,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_02_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 9000.00,
       totalPayment: 4000.00,
       pendingPayment: 5000.00,
@@ -547,7 +547,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_02_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 4500.00,
       totalPayment: 3000.00,
       pendingPayment: 1500.00,
@@ -608,7 +608,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_03_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 6000.00,
       totalPayment: 3000.00,
       pendingPayment: 3000.00,
@@ -618,7 +618,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_03_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 7200.00,
       totalPayment: 5000.00,
       pendingPayment: 2200.00,
@@ -628,7 +628,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_03_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 4800.00,
       totalPayment: 4800.00,
       pendingPayment: 0.00,
@@ -638,7 +638,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_03_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 10000.00,
       totalPayment: 6000.00,
       pendingPayment: 4000.00,
@@ -648,7 +648,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_03_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 4500.00,
       totalPayment: 4500.00,
       pendingPayment: 0.00,
@@ -709,7 +709,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_04_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 6000.00,
       totalPayment: 4000.00,
       pendingPayment: 2000.00,
@@ -719,7 +719,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_04_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 8800.00,
       totalPayment: 5500.00,
       pendingPayment: 3300.00,
@@ -729,7 +729,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_04_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 4700.00,
       totalPayment: 4700.00,
       pendingPayment: 0.00,
@@ -739,7 +739,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_04_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 9000.00,
       totalPayment: 9000.00,
       pendingPayment: 0.00,
@@ -749,7 +749,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_04_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 4800.00,
       totalPayment: 4800.00,
       pendingPayment: 0.00,
@@ -810,7 +810,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_05_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 6000.00,
       totalPayment: 3000.00,
       pendingPayment: 3000.00,
@@ -820,7 +820,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_05_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 8000.00,
       totalPayment: 4000.00,
       pendingPayment: 4000.00,
@@ -830,7 +830,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_05_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 4700.00,
       totalPayment: 4700.00,
       pendingPayment: 0.00,
@@ -840,7 +840,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_05_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 9200.00,
       totalPayment: 9200.00,
       pendingPayment: 0.00,
@@ -850,7 +850,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_05_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 5000.00,
       totalPayment: 5000.00,
       pendingPayment: 0.00,
@@ -911,7 +911,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_06_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 6100.00,
       totalPayment: 2000.00,
       pendingPayment: 4100.00,
@@ -921,7 +921,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_06_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 7500.00,
       totalPayment: 2500.00,
       pendingPayment: 5000.00,
@@ -931,7 +931,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_06_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 4900.00,
       totalPayment: 4900.00,
       pendingPayment: 0.00,
@@ -941,7 +941,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_06_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 9700.00,
       totalPayment: 9700.00,
       pendingPayment: 0.00,
@@ -951,7 +951,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_06_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 5300.00,
       totalPayment: 5300.00,
       pendingPayment: 0.00,
@@ -1012,7 +1012,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_07_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 5000.00,
       totalPayment: 3000.00,
       pendingPayment: 2000.00,
@@ -1022,7 +1022,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_07_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 8200.00,
       totalPayment: 4500.00,
       pendingPayment: 3700.00,
@@ -1032,7 +1032,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_07_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 4800.00,
       totalPayment: 4800.00,
       pendingPayment: 0.00,
@@ -1042,7 +1042,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_07_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 8200.00,
       totalPayment: 8200.00,
       pendingPayment: 0.00,
@@ -1052,7 +1052,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_07_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 5500.00,
       totalPayment: 5500.00,
       pendingPayment: 0.00,
@@ -1113,7 +1113,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_08_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 5000.00,
       totalPayment: 5000.00,
       pendingPayment: 0.00,
@@ -1123,7 +1123,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_08_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 4800.00,
       totalPayment: 4800.00,
       pendingPayment: 0.00,
@@ -1133,7 +1133,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_08_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 5300.00,
       totalPayment: 5300.00,
       pendingPayment: 0.00,
@@ -1143,7 +1143,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_08_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 7400.00,
       totalPayment: 7400.00,
       pendingPayment: 0.00,
@@ -1153,7 +1153,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_08_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 5800.00,
       totalPayment: 5800.00,
       pendingPayment: 0.00,
@@ -1214,7 +1214,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_09_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 5400.00,
       totalPayment: 5400.00,
       pendingPayment: 0.00,
@@ -1224,7 +1224,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_09_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 6000.00,
       totalPayment: 6000.00,
       pendingPayment: 0.00,
@@ -1234,7 +1234,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_09_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 5800.00,
       totalPayment: 5800.00,
       pendingPayment: 0.00,
@@ -1244,7 +1244,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_09_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 8500.00,
       totalPayment: 8500.00,
       pendingPayment: 0.00,
@@ -1254,7 +1254,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_09_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 6400.00,
       totalPayment: 6400.00,
       pendingPayment: 0.00,
@@ -1315,7 +1315,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_10_06',
       clientId: '1',
-      productId: 'P6',
+      productId: 'P2',
       totalAmount: 7500.00,
       totalPayment: 7500.00,
       pendingPayment: 0.00,
@@ -1325,7 +1325,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_10_07',
       clientId: '3',
-      productId: 'P7',
+      productId: 'P3',
       totalAmount: 8200.00,
       totalPayment: 8200.00,
       pendingPayment: 0.00,
@@ -1335,7 +1335,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_10_08',
       clientId: '1',
-      productId: 'P8',
+      productId: 'P1',
       totalAmount: 6000.00,
       totalPayment: 6000.00,
       pendingPayment: 0.00,
@@ -1345,7 +1345,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_10_09',
       clientId: '2',
-      productId: 'P9',
+      productId: 'P4',
       totalAmount: 8600.00,
       totalPayment: 8600.00,
       pendingPayment: 0.00,
@@ -1355,7 +1355,7 @@ class Global {
     Purchase(
       purchaseId: 'PCH2020_10_10',
       clientId: '3',
-      productId: 'P10',
+      productId: 'P5',
       totalAmount: 7000.00,
       totalPayment: 7000.00,
       pendingPayment: 0.00,
