@@ -4,6 +4,7 @@ import 'package:stock_manage/models/product_model.dart';
 import 'package:stock_manage/models/purchase_model.dart';
 import 'package:stock_manage/utils/global.dart';
 import 'package:stock_manage/views/client_views/client_details.dart';
+import 'package:stock_manage/widgets/custom_sidebar.dart';
 
 class PurchaseProduct extends StatefulWidget {
   const PurchaseProduct({super.key});
@@ -35,6 +36,7 @@ class PurchaseProductState extends State<PurchaseProduct> {
     }
 
     return Scaffold(
+      drawer: const Sidebar(),
       appBar: AppBar(
         titleTextStyle: const TextStyle(color: AppColors.white),
         iconTheme: const IconThemeData(color: AppColors.white),

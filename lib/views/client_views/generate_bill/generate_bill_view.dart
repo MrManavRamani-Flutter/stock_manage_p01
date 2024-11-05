@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:stock_manage/constants/app_colors.dart';
@@ -134,65 +133,117 @@ class _GenerateBillViewState extends State<GenerateBillView> {
   void _generatePdfPreview() async {
     final pdf = pw.Document();
 
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              // Company Name
-              pw.Text('Your Company Name',
-                  style: pw.TextStyle(
-                      fontSize: 24, fontWeight: pw.FontWeight.bold),
-                  textAlign: pw.TextAlign.center),
-              pw.SizedBox(height: 8),
-              // Contact Info
-              pw.Text('Contact: +91 123 4567 890',
-                  style: const pw.TextStyle(fontSize: 14),
-                  textAlign: pw.TextAlign.center),
-              pw.Text('Email: xyz@gmail.com',
-                  style: const pw.TextStyle(fontSize: 14),
-                  textAlign: pw.TextAlign.center),
-              pw.SizedBox(height: 20),
-              // Client Details
-              pw.Text('Client Details',
-                  style: pw.TextStyle(
-                      fontSize: 20, fontWeight: pw.FontWeight.bold)),
-              pw.Text('Name: ${widget.client.clientName}'),
-              pw.Text('Email: ${widget.client.email}'),
-              pw.Text('Contact: ${widget.client.contact}'),
-              pw.SizedBox(height: 20),
-              // Purchase Details
-              pw.Text('Purchase Details',
-                  style: pw.TextStyle(
-                      fontSize: 20, fontWeight: pw.FontWeight.bold)),
-              // Updated to use TableHelper
-              pdfWidgets.TableHelper.fromTextArray(
-                context: context,
-                data: <List<String>>[
-                  <String>['Product Name', 'Total Amount', 'Paid', 'Pending'],
-                  ...getFilteredPurchases().map((purchase) {
-                    final product = Global.products
-                        .firstWhere((prod) => prod.id == purchase.productId);
-                    return [
-                      product.name,
-                      '\$${purchase.totalAmount.toStringAsFixed(2)}',
-                      '\$${purchase.totalPayment.toStringAsFixed(2)}',
-                      '\$${purchase.pendingPayment.toStringAsFixed(2)}',
-                    ];
-                  }),
-                ],
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                cellStyle: const pw.TextStyle(),
-                border: pw.TableBorder.all(),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+    // Function to add company information header
+    pw.Widget addHeader() {
+      return pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text('Your Company Name',
+              style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
+              textAlign: pw.TextAlign.center),
+          pw.SizedBox(height: 8),
+          pw.Text('Contact: +91 123 4567 890',
+              style: const pw.TextStyle(fontSize: 14),
+              textAlign: pw.TextAlign.center),
+          pw.Text('Email: xyz@gmail.com',
+              style: const pw.TextStyle(fontSize: 14),
+              textAlign: pw.TextAlign.center),
+          pw.SizedBox(height: 20),
+        ],
+      );
+    }
+
+    // Function to add client information
+    pw.Widget addClientInfo() {
+      return pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text('Client Details',
+              style:
+                  pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+          pw.Text('Name: ${widget.client.clientName}'),
+          pw.Text('Email: ${widget.client.email}'),
+          pw.Text('Contact: ${widget.client.contact}'),
+          pw.SizedBox(height: 20),
+        ],
+      );
+    }
+
+    // Add purchases to the PDF
+    List<Purchase> filteredPurchases = getFilteredPurchases();
+    int purchaseCount = 0;
+
+    pdf.addPage(pw.Page(
+      build: (pw.Context context) {
+        return pw.Column(
+          children: [
+            addHeader(),
+            addClientInfo(),
+            // Table Header
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+                  children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Product Name',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Total Amount',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Paid',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8.0),
+                      child: pw.Text('Pending',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                // Add Purchases
+                for (final purchase in filteredPurchases)
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child: pw.Text(Global.products
+                            .firstWhere((prod) => prod.id == purchase.productId)
+                            .name),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child: pw.Text(
+                            '\$${purchase.totalAmount.toStringAsFixed(2)}'),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child: pw.Text(
+                            '\$${purchase.totalPayment.toStringAsFixed(2)}'),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child: pw.Text(
+                            '\$${purchase.pendingPayment.toStringAsFixed(2)}'),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+        );
+      },
+    ));
 
     await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdf.save());
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
   }
 }

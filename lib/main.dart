@@ -32,7 +32,8 @@ class StockManagementApp extends StatelessWidget {
               AppColors.accentColor, // Replace accentColor with secondary
         ),
       ),
-      // home: const LoginScreen(),
+      darkTheme: ThemeData.dark(),
+      // Dark theme
       home: const BottomNavigation(),
     );
   }

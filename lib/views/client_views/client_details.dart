@@ -11,6 +11,7 @@ import 'package:stock_manage/views/client_views/purchase_views/purchase_details_
 import 'package:stock_manage/views/client_views/widgets/client_info_card.dart';
 import 'package:stock_manage/views/client_views/widgets/payment_status_cards.dart';
 import 'package:stock_manage/views/client_views/widgets/total_card.dart';
+import 'package:stock_manage/widgets/bottom_navigation.dart';
 
 class ClientDetails extends StatefulWidget {
   final Client client;
@@ -53,6 +54,17 @@ class _ClientDetailsState extends State<ClientDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BottomNavigation(
+                      index: 4,
+                    ),
+                  ));
+            },
+            icon: const Icon(Icons.arrow_back)),
         titleTextStyle: const TextStyle(color: AppColors.white),
         iconTheme: const IconThemeData(color: AppColors.white),
         title: const Text(

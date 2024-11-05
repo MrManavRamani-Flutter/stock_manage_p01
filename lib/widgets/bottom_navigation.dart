@@ -9,14 +9,15 @@ import '../views/client_views/clients_view.dart';
 import '../views/warehouse_view/warehouses_view.dart';
 
 class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key});
+  final int index;
+  const BottomNavigation({super.key, this.index = 2});
 
   @override
   BottomNavigationState createState() => BottomNavigationState();
 }
 
 class BottomNavigationState extends State<BottomNavigation> {
-  int _currentIndex = 2;
+  late int _currentIndex;
 
   final List<Widget> _screens = [
     const ClientsView(),
@@ -26,6 +27,11 @@ class BottomNavigationState extends State<BottomNavigation> {
     const PurchaseProduct(),
     // const UserProfile(),
   ];
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.index; // Initialize _currentIndex from widget.index
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -155,11 +155,13 @@ class _WarehousesViewState extends State<WarehousesView> {
       drawer: const Sidebar(),
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        title: Text(
+        title: const Text(
           'Warehouses',
           style: TextStyle(
-              color: AppColors.white,
-              fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
         iconTheme: const IconThemeData(color: AppColors.white),
         actions: [

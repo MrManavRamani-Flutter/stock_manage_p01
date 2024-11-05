@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:stock_manage/constants/app_colors.dart';
 import 'package:stock_manage/views/profile_views/user_profile.dart';
+import 'package:stock_manage/views/setting_views/setting_view.dart';
+import 'package:stock_manage/views/user_auth/login_view.dart';
+import 'package:stock_manage/widgets/bottom_navigation.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
@@ -84,6 +87,12 @@ class Sidebar extends StatelessWidget {
                   icon: Icons.home,
                   label: 'Home',
                   onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BottomNavigation(),
+                      ),
+                    );
                     // Navigate to Home
                   },
                 ),
@@ -92,6 +101,12 @@ class Sidebar extends StatelessWidget {
                   icon: Icons.settings,
                   label: 'Settings',
                   onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ),
+                    );
                     // Navigate to Settings
                   },
                 ),
@@ -105,6 +120,11 @@ class Sidebar extends StatelessWidget {
             label: 'Logout',
             color: Colors.redAccent,
             onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ));
               // Implement logout functionality
             },
           ),
