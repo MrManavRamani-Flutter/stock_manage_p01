@@ -171,7 +171,7 @@ class _GenerateBillViewState extends State<GenerateBillView> {
 
     // Add purchases to the PDF
     List<Purchase> filteredPurchases = getFilteredPurchases();
-    int purchaseCount = 0;
+    // int purchaseCount = 0;
 
     pdf.addPage(pw.Page(
       build: (pw.Context context) {

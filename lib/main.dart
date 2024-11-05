@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stock_manage/widgets/bottom_navigation.dart';
+import 'package:stock_manage/views/user_auth/login_view.dart';
 
 import 'constants/app_colors.dart';
 
@@ -34,7 +34,7 @@ class StockManagementApp extends StatelessWidget {
       ),
       darkTheme: ThemeData.dark(),
       // Dark theme
-      home: const BottomNavigation(),
+      home: const LoginScreen(),
     );
   }
 }

@@ -9,10 +9,10 @@ class EmployeeView extends StatefulWidget {
   const EmployeeView({super.key});
 
   @override
-  _EmployeeViewState createState() => _EmployeeViewState();
+  EmployeeViewState createState() => EmployeeViewState();
 }
 
-class _EmployeeViewState extends State<EmployeeView> {
+class EmployeeViewState extends State<EmployeeView> {
   List<Employee> filteredEmployees =
       Global.employees; // Start with all employees
   final TextEditingController searchController = TextEditingController();

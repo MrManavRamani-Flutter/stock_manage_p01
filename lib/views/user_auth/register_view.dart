@@ -97,16 +97,16 @@ class RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Center(
+                  const Center(
                     child: Column(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.person_add,
                           size: 60,
                           color: Colors.blue,
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
+                        SizedBox(height: 10),
+                        Text(
                           'Create Account',
                           style: TextStyle(
                             fontSize: 24,
