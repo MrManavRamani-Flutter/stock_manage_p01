@@ -81,6 +81,7 @@ class _WarehousesViewState extends State<WarehousesView> {
                   );
                 });
                 Navigator.of(context).pop();
+                _refreshWarehouseData();
               },
               child: const Text('Add'),
             ),
@@ -88,7 +89,6 @@ class _WarehousesViewState extends State<WarehousesView> {
         );
       },
     );
-    _refreshWarehouseData();
   }
 
   Future<void> _showAddCategoryDialog(Warehouse warehouse) async {
@@ -155,36 +155,17 @@ class _WarehousesViewState extends State<WarehousesView> {
       drawer: const Sidebar(),
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        title: const Text(
+        title: Text(
           'Warehouses',
-          style: TextStyle(color: AppColors.white, fontSize: 20),
+          style: TextStyle(
+              color: AppColors.white,
+              fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
         ),
         iconTheme: const IconThemeData(color: AppColors.white),
         actions: [
-          InkWell(
-            onTap: _showAddWarehouseDialog,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 8.0), // Adjust padding as needed
-              decoration: BoxDecoration(
-                // color: AppColors
-                //     .primaryColor, // Replace with your desired background color
-                borderRadius: BorderRadius.circular(8.0), // Rounded corners
-              ),
-              child: const Row(
-                mainAxisSize:
-                    MainAxisSize.min, // Size only as much as the content needs
-                children: [
-                  Icon(Icons.add, color: AppColors.white), // Icon color
-                  SizedBox(width: 8.0), // Spacing between icon and text
-                  Text(
-                    'Add Warehouse',
-                    style: TextStyle(
-                        color: AppColors.white, fontSize: 16.0), // Text styling
-                  ),
-                ],
-              ),
-            ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _showAddWarehouseDialog,
           ),
         ],
       ),
@@ -263,6 +244,7 @@ class _WarehouseList extends StatelessWidget {
     return SizedBox(
       height: 150,
       child: ListView.builder(
+        padding: const EdgeInsets.all(10),
         scrollDirection: Axis.horizontal,
         itemCount: warehouses.length,
         itemBuilder: (context, index) {
@@ -286,8 +268,9 @@ class _WarehouseList extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       warehouse.name,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.bodyLarge!.fontSize,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
@@ -329,42 +312,41 @@ class _WarehouseDetail extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              selectedWarehouse!.name,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+        Text(
+          selectedWarehouse!.name,
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          selectedWarehouse!.location,
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: () => onAddCategory(selectedWarehouse!),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            InkWell(
-              onTap: () => onAddCategory(selectedWarehouse!),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0), // Adjust padding as needed
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor, // Change color as desired
-                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize
-                      .min, // Size only as much as the content needs
-                  children: [
-                    Icon(Icons.add, color: Colors.white), // Icon color
-                    SizedBox(width: 8.0), // Spacing between icon and text
-                    Text(
-                      'Add Category',
-                      style: TextStyle(
-                          color: Colors.white, fontSize: 16.0), // Text styling
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+          ),
+          child: const Text(
+            'Add Category',
+            style: TextStyle(color: AppColors.white),
+          ),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Categories:',
+          style: TextStyle(
+            fontSize: 20, // Use a suitable size instead
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 8),
         Expanded(
@@ -373,13 +355,8 @@ class _WarehouseDetail extends StatelessWidget {
             itemBuilder: (context, index) {
               final category = selectedWarehouse!.categories[index];
               return Card(
-                elevation: 4,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                child: ListTile(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -393,44 +370,14 @@ class _WarehouseDetail extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.category,
-                          size: 40,
-                          color: AppColors.primaryColor,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                category.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Total Products: ${category.totalProducts}',
-                                style: const TextStyle(
-                                  color: AppColors.gray,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(
-                          Icons.arrow_forward,
-                          color: AppColors.primaryColor,
-                        ),
-                      ],
-                    ),
+                  title: Text(category.name),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Products: ${category.totalProducts}'),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.arrow_forward_rounded),
+                    ],
                   ),
                 ),
               );

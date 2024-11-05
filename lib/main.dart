@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:stock_manage/widgets/bottom_navigation.dart';
 
 import 'constants/app_colors.dart';
-import 'widgets/bottom_navigation.dart';
 
 void main() {
   runApp(const StockManagementApp());
@@ -21,12 +21,18 @@ class StockManagementApp extends StatelessWidget {
         ),
         primaryColor: AppColors.primaryColor,
         scaffoldBackgroundColor: AppColors.backgroundColor,
+        textTheme: const TextTheme(
+          bodySmall: TextStyle(fontSize: 9), // Small size for mobile
+          bodyMedium: TextStyle(fontSize: 11), // Default size for mobile
+          bodyLarge: TextStyle(fontSize: 12), // Large size for mobile
+        ),
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: AppColors.primaryColor,
           secondary:
               AppColors.accentColor, // Replace accentColor with secondary
         ),
       ),
+      // home: const LoginScreen(),
       home: const BottomNavigation(),
     );
   }

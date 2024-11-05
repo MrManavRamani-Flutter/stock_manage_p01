@@ -89,7 +89,7 @@ class _DashboardState extends State<Dashboard> {
           Center(
             child: Text(
               'No sales data available for the selected filters.',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
             ),
           ),
         AspectRatio(

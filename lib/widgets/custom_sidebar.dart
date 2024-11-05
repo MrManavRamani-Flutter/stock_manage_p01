@@ -43,7 +43,7 @@ class Sidebar extends StatelessWidget {
                           'Username', // Replace with actual username
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -52,7 +52,7 @@ class Sidebar extends StatelessWidget {
                           'user@example.com', // Replace with actual email
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: 14,
+                            fontSize: 11,
                           ),
                         ),
                         SizedBox(height: 2),
@@ -60,7 +60,7 @@ class Sidebar extends StatelessWidget {
                           '+1234567890', // Replace with actual contact
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: 14,
+                            fontSize: 11,
                           ),
                         ),
                       ],
@@ -112,7 +112,9 @@ class Sidebar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Text(
               'Version 1.0.0',
-              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
             ),
           ),
         ],
@@ -129,10 +131,10 @@ class Sidebar extends StatelessWidget {
       leading: Icon(icon, color: color ?? Colors.black87),
       title: Text(
         label,
-        style: TextStyle(
-          color: color ?? Colors.black87,
-          fontWeight: FontWeight.w600,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: color ?? Colors.black87,
+              fontWeight: FontWeight.w600,
+            ),
       ),
       onTap: onTap,
     );
